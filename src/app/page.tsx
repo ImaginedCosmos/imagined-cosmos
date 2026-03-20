@@ -84,6 +84,30 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Featured */}
+      <section className="px-6 py-24 max-w-4xl mx-auto w-full">
+        <h2 className="text-3xl font-bold text-center mb-12">Latest</h2>
+        <a
+          href="/friedmann"
+          className="block rounded-xl border border-surface-light bg-surface p-8 hover:border-accent transition-colors group"
+        >
+          <p className="text-xs font-mono tracking-widest uppercase text-accent mb-2">
+            Chapter 01
+          </p>
+          <h3 className="text-2xl font-bold mb-3 group-hover:text-accent transition-colors">
+            The Friedmann Equations
+          </h3>
+          <p className="text-muted leading-relaxed">
+            The master equations of cosmic expansion — derived, explained, and
+            simulated with an interactive visualization. Toggle dark energy on
+            and off to see 200 galaxies accelerate or decelerate in real time.
+          </p>
+          <p className="mt-4 text-sm text-accent font-mono">
+            Read &amp; simulate &rarr;
+          </p>
+        </a>
+      </section>
+
       {/* Topics */}
       <section className="px-6 py-24 max-w-6xl mx-auto w-full">
         <h2 className="text-3xl font-bold text-center mb-16">
