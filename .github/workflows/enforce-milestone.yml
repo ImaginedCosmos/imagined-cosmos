@@ -1,0 +1,133 @@
+# Enforce Milestone Assignment
+# Guarantees every open issue has a milestone assigned.
+name: Enforce Milestone
+on:
+  issues:
+    types: [opened, reopened, demilestoned]
+  schedule:
+    - cron: '0 8 * * 1'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions: {}
+
+jobs:
+  on-issue:
+    if: github.event_name == 'issues'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Assign default milestone if missing
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const issue = context.payload.issue;
+            if (issue.milestone) {
+              console.log(`Issue #${issue.number} already has milestone: ${issue.milestone.title}`);
+              return;
+            }
+            const defaultTitle = 'Backlog Triage';
+            async function findOrCreateMilestone() {
+              const allMilestones = await github.paginate(
+                github.rest.issues.listMilestones,
+                { owner: context.repo.owner, repo: context.repo.repo, state: 'open', per_page: 100 }
+              );
+              const existing = allMilestones.find(m => m.title === defaultTitle);
+              if (existing) return existing;
+              try {
+                const created = await github.rest.issues.createMilestone({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  title: defaultTitle,
+                  description: 'Default triage milestone for issues awaiting roadmap placement',
+                });
+                return created.data;
+              } catch (err) {
+                if (err.status === 422) {
+                  const retry = await github.paginate(
+                    github.rest.issues.listMilestones,
+                    { owner: context.repo.owner, repo: context.repo.repo, state: 'open', per_page: 100 }
+                  );
+                  const found = retry.find(m => m.title === defaultTitle);
+                  if (found) return found;
+                }
+                throw err;
+              }
+            }
+            const milestone = await findOrCreateMilestone();
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              milestone: milestone.number,
+            });
+            console.log(`Assigned milestone "${defaultTitle}" to issue #${issue.number}`);
+
+  reconcile:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Backfill open issues missing milestones
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const defaultTitle = 'Backlog Triage';
+            const normalize = (s) => (s || '').replace(/[\u0000-\u001f\u007f-\u009f]/g, '');
+            async function findOrCreateMilestone() {
+              const allMilestones = await github.paginate(
+                github.rest.issues.listMilestones,
+                { owner: context.repo.owner, repo: context.repo.repo, state: 'open', per_page: 100 }
+              );
+              const existing = allMilestones.find(m => m.title === defaultTitle);
+              if (existing) return existing;
+              try {
+                const created = await github.rest.issues.createMilestone({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  title: defaultTitle,
+                  description: 'Default triage milestone for issues awaiting roadmap placement',
+                });
+                return created.data;
+              } catch (err) {
+                if (err.status === 422) {
+                  const retry = await github.paginate(
+                    github.rest.issues.listMilestones,
+                    { owner: context.repo.owner, repo: context.repo.repo, state: 'open', per_page: 100 }
+                  );
+                  const found = retry.find(m => m.title === defaultTitle);
+                  if (found) return found;
+                }
+                throw err;
+              }
+            }
+            const issues = await github.paginate(github.rest.issues.listForRepo, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              per_page: 100,
+            });
+            const unmilestoned = issues.filter(i => !i.milestone && !i.pull_request);
+            if (unmilestoned.length === 0) { console.log('Nothing to backfill.'); return; }
+            const milestone = await findOrCreateMilestone();
+            let updated = 0;
+            for (const issue of unmilestoned) {
+              try {
+                await github.rest.issues.update({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: issue.number,
+                  milestone: milestone.number,
+                });
+                updated++;
+              } catch (err) {
+                console.error(`Failed #${issue.number}: ${err.message}`);
+              }
+            }
+            console.log(`Backfill: ${updated}/${unmilestoned.length} updated`);
+            await core.summary.addHeading('Backfill Result', 3).addRaw(`Assigned "${defaultTitle}" to **${updated}** issue(s).`).write();
