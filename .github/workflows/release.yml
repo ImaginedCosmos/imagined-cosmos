@@ -1,0 +1,68 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  GCP_PROJECT: scheduler-systems-web
+  GCP_REGION: europe-west4
+  SERVICE_NAME: imagined-cosmos-prod
+  AR_REPO: europe-west4-docker.pkg.dev/scheduler-systems-web/cosmos
+
+jobs:
+  deploy:
+    name: Build & Deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Authenticate Docker to Artifact Registry
+        run: gcloud auth configure-docker europe-west4-docker.pkg.dev --quiet
+
+      - name: Build and push image
+        run: |
+          IMAGE="${AR_REPO}/imagined-cosmos:${GITHUB_SHA}"
+          docker buildx build --tag "${IMAGE}" --push .
+          echo "IMAGE=${IMAGE}" >> $GITHUB_ENV
+
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy "${SERVICE_NAME}" \
+            --image "${IMAGE}" \
+            --region "${GCP_REGION}" \
+            --project "${GCP_PROJECT}" \
+            --port 3000 \
+            --cpu 1 \
+            --memory 512Mi \
+            --max-instances 4 \
+            --concurrency 80 \
+            --set-env-vars "NODE_ENV=production,HOSTNAME=0.0.0.0" \
+            --quiet
+
+      - name: Health check
+        run: |
+          sleep 10
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 10 https://cosmos.scheduler-systems.com)
+          if [ "$STATUS" = "200" ]; then
+            echo "Health check passed (HTTP $STATUS)"
+          else
+            echo "::warning::Health check returned HTTP $STATUS"
+          fi
