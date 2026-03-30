@@ -17,7 +17,7 @@ permissions: {}
 jobs:
   on-issue:
     if: github.event_name == 'issues'
-    runs-on: ubuntu-latest
+    runs-on: ci-standard-runc-x64
     permissions:
       issues: write
     steps:
@@ -69,7 +69,7 @@ jobs:
 
   reconcile:
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-latest
+    runs-on: ci-standard-runc-x64
     permissions:
       issues: write
     steps:
