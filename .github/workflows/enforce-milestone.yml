@@ -15,9 +15,19 @@ concurrency:
 permissions: {}
 
 jobs:
+  route:
+    uses: Scheduler-Systems/infra/.github/workflows/runner-router.yml@main
+    with:
+      workflow_key: enforce-milestone.yml
+    permissions:
+      actions: read
+      contents: read
+    secrets: inherit
+
   on-issue:
     if: github.event_name == 'issues'
-    runs-on: ci-standard-runc-x64
+    needs: route
+    runs-on: ${{ needs.route.outputs.target_runner }}
     permissions:
       issues: write
     steps:
@@ -69,7 +79,8 @@ jobs:
 
   reconcile:
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
-    runs-on: ci-standard-runc-x64
+    needs: route
+    runs-on: ${{ needs.route.outputs.target_runner }}
     permissions:
       issues: write
     steps:
