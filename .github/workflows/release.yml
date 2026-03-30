@@ -18,7 +18,7 @@ env:
 jobs:
   deploy:
     name: Build & Deploy
-    runs-on: ubuntu-latest
+    runs-on: ci-standard-runc-x64
     timeout-minutes: 15
 
     steps:
