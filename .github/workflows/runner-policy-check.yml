@@ -1,0 +1,883 @@
+name: Runner Policy Check
+
+# Reusable workflow called from Gate in every repo.
+# Validates that all workflow files use approved runners.
+#
+# Canonical policy: github/runner-policy.yml
+# When updating the policy file, update the RUNNER_POLICY heredoc below too.
+
+on:
+  workflow_call:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.repository }}-${{ github.event_name }}-${{ github.ref || github.run_id }}
+  cancel-in-progress: true
+
+# This is static YAML validation; keep it off the protected ARC pools.
+jobs:
+  push-noop:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Mark push run successful
+        run: echo "Runner policy check is reusable-only; push runs are a no-op."
+
+  check-runners:
+    # Reusable workflows inherit the caller event name (for example pull_request),
+    # so any non-push invocation here is the real policy enforcement path.
+    if: github.event_name != 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout PR code
+        uses: actions/checkout@v6
+
+      - name: Write runner policy
+        run: |
+          # Build the expression delimiters at shell runtime so push loads this
+          # workflow without requiring a workflow_call inputs context.
+          OPEN_EXPR='$''{{'
+          CLOSE_EXPR='}''}'
+          cat > /tmp/runner-policy.yml <<POLICY_EOF
+          default_allowed:
+            - ubuntu-latest
+            - ubuntu-24.04
+            - ubuntu-24.04-arm
+            - ubuntu-22.04
+            - ubuntu-22.04-arm
+            - macos-latest
+            - windows-latest
+            - ci-standard-runc
+            - ci-medium-runc
+            - ci-high-runc
+            - ci-standard-runc-x64
+            - ci-standard-vz-arm64
+            - ci-medium-runc-x64
+            - ci-medium-vz-arm64
+            - ci-android-runc-x64
+            - ci-android-vz-arm64
+            - ci-high-runc-x64
+            - ci-high-vz-arm64
+            - agents-standard-runc
+            - agents-medium-runc
+            - agents-high-runc
+            - agents-standard-runc-x64
+            - agents-standard-vz-arm64
+            - agents-medium-runc-x64
+            - agents-medium-vz-arm64
+            - agents-high-runc-x64
+            - agents-high-vz-arm64
+            - security-standard-runc
+            - macos-ci
+          allowed_groups:
+            - ci-standard
+            - ci-medium
+            - ci-high
+            - linux-agents
+            - macos-ci
+          exceptions:
+            Scheduler:
+              - macos-ci
+              - macos-ios-runners
+              - bare-high-arm64
+            infra:
+              - macos-host
+              - bare-high-arm64
+              - docker-standard-dind-x64
+              - docker-medium-dind-x64
+              - docker-medium-dind-arm64
+              - docker-high-dind-x64
+              - docker-high-dind-arm64
+              - linux-docker
+              - ubuntu-latest
+            gal-run-private:
+              - bare-high-arm64
+          private_repos_default_self_hosted: true
+          github_hosted_primary_private_repos: []
+          github_hosted_exceptions:
+            _global:
+              - gate.yml
+            infra:
+              - build-arc-runner.yml
+              - runner-policy-check.yml
+              - runner-router.yml
+              - runner-control-plane-validate.yml
+              - tailscale-health-check.yml
+            gal-run-private:
+              - arc-runner-images.yml
+              - release.yml
+              - runner-router.yml
+          hybrid_overflow_workflows:
+            infra:
+              - apphosting-rollout-health.yml
+              - arc-scale-set-capacity-validate.yml
+              - build-vllm-sm120.yml
+              - checkov-iac-scan.yml
+              - cloud-security-audit.yml
+              - codeql-analysis.yml
+              - container-security-scan.yml
+              - credential-expiry-check.yml
+              - deploy-agent-model.yml
+              - deploy-governance-serverless.yml
+              - deploy-stratus.yml
+              - enforce-assignee.yml
+              - enforce-milestone.yml
+              - gpu-dispatch.yml
+              - hygiene-workflow-act-validate.yml
+              - iac-security-scan.yml
+              - network-forensics-guardrails.yml
+              - pr-governance.yml
+              - quarterly-access-review.yml
+              - secret-scan.yml
+              - stratus-ci.yml
+              - stratus-e2e.yml
+              - sync-runpod-secret.yml
+              - system-hardening-audit.yml
+            operations:
+              - claude-code-review.yml
+              - claude.yml
+              - deploy-firebase.yml
+              - deploy-firestore.yml
+              - deploy-functions.yml
+              - enforce-assignee.yml
+              - enforce-milestone.yml
+              - github-ingest.yml
+              - pr-governance.yml
+              - pr-test-plan-guard.yml
+              - release-production.yml
+            project-master:
+              - cross-post-blog.yml
+              - enforce-assignee.yml
+              - firebase-hosting-preview.yml
+              - firebase-hosting.yml
+              - generate-blog-post.yml
+              - legal-notifications-preview.yml
+              - legal-notifications-send.yml
+              - unit-tests.yml
+            Scheduler:
+              - android-build.yml
+              - code-analysis.yml
+              - codeql-analysis.yml
+              - enforce-assignee.yml
+              - enforce-milestone.yml
+              - pr-governance.yml
+            gal-run-private:
+              - admin-deploy.yml
+              - artifact-cleanup.yml
+              - benchmark-governance.yml
+              - ci.yml
+              - close-verified-release-issues.yml
+              - codeql-analysis.yml
+              - collect-test-plan.yml
+              - dependency-scan.yml
+              - deploy-api.yml
+              - deploy-governance-serverless.yml
+              - domain-allowlist-check.yml
+              - e2e.yml
+              - enforce-assignee.yml
+              - enforce-milestone.yml
+              - enforce-sdlc.yml
+              - grant-vertex-runtime-access.yml
+              - homebrew-bump.yml
+              - issue-hygiene.yml
+              - org-workflow-runner-audit.yml
+              - policy-check.yml
+              - post-merge-maintenance.yml
+              - pr-governance.yml
+              - queue-governor.yml
+              - refresh-background-agent-runner-image.yml
+              - reopen-auto-closed-issues.yml
+              - require-issue-reference.yml
+              - retrain-governance-model.yml
+              - runner-policy-check.yml
+              - scheduled-branch-pruning.yml
+              - scheduled-scan.yml
+              - sdlc-compliance.yml
+              - sdlc-test-suite.yml
+              - sync-release-version.yml
+              - synthetic-production-monitor.yml
+              - terraform.yml
+              - validate-schema.yml
+            business-ops-admin:
+              - enforce-assignee.yml
+              - enforce-milestone.yml
+              - pr-governance.yml
+              - weekly-kpi-export.yml
+            company-website:
+              - enforce-assignee.yml
+              - enforce-milestone.yml
+              - pr-governance.yml
+            financial:
+              - enforce-assignee.yml
+            legal:
+              - enforce-assignee.yml
+              - enforce-milestone.yml
+              - pr-governance.yml
+            marketing:
+              - biweekly-aso-export.yml
+              - daily-backlinks.yml
+              - enforce-assignee.yml
+              - release-growth-console.yml
+              - seo-tools-backup.yml
+              - weekly-research.yml
+            brevo-email-templates:
+              - enforce-assignee.yml
+            imagined-cosmos:
+              - enforce-milestone.yml
+              - pr-governance.yml
+              - release.yml
+            keep-mcp:
+              - enforce-assignee.yml
+              - enforce-milestone.yml
+              - pr-governance.yml
+            llm-conf-test:
+              - copilot-setup-steps.yml
+              - enforce-assignee.yml
+          dynamic_patterns:
+            - '${OPEN_EXPR} inputs.runs-on ${CLOSE_EXPR}'
+            - '${OPEN_EXPR} inputs.runner_label ${CLOSE_EXPR}'
+            - '${OPEN_EXPR} inputs.runner_group ${CLOSE_EXPR}'
+          POLICY_EOF
+
+      - name: Validate workflow runners
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          POLICY="/tmp/runner-policy.yml"
+          REPO_NAME="${GITHUB_REPOSITORY#*/}"
+          REPO_VISIBILITY="unknown"
+          VIOLATIONS=()
+
+          if command -v python3 >/dev/null 2>&1; then
+            REPO_VISIBILITY="$(
+              python3 -c 'import json, os, sys, urllib.request; repo=os.environ.get("GITHUB_REPOSITORY"); token=os.environ.get("GITHUB_TOKEN"); sys.exit(0) if not repo or not token else None; req=urllib.request.Request(f"https://api.github.com/repos/{repo}", headers={"Accept":"application/vnd.github+json","Authorization":f"Bearer {token}","X-GitHub-Api-Version":"2022-11-28","User-Agent":"runner-policy-check"}); data=json.load(urllib.request.urlopen(req, timeout=20)); print(data.get("visibility") or ("private" if data.get("private") else "public"))'
+            )"
+          fi
+
+          # Parse default allowed runners from policy
+          DEFAULT_ALLOWED=()
+          in_default=false
+          while IFS= read -r line; do
+            line="${line%$'\r'}"  # strip trailing \r
+            if [[ "$line" =~ default_allowed: ]]; then
+              in_default=true
+              continue
+            fi
+            if $in_default; then
+              if [[ "$line" =~ ^[[:space:]]*-[[:space:]] ]]; then
+                runner=$(echo "$line" | sed 's/^[[:space:]]*- //' | sed 's/[[:space:]]*#.*//' | tr -d '"')
+                DEFAULT_ALLOWED+=("$runner")
+              elif [[ "$line" =~ ^[[:space:]]*# ]] || [[ -z "$line" ]]; then
+                continue  # skip comments and blank lines
+              else
+                break
+              fi
+            fi
+          done < "$POLICY"
+
+          # Parse allowed runner groups from policy
+          ALLOWED_GROUPS=()
+          in_allowed_groups=false
+          while IFS= read -r line; do
+            line="${line%$'\r'}"  # strip trailing \r
+            if [[ "$line" =~ allowed_groups: ]]; then
+              in_allowed_groups=true
+              continue
+            fi
+            if $in_allowed_groups; then
+              if [[ "$line" =~ ^[[:space:]]*-[[:space:]] ]]; then
+                group=$(echo "$line" | sed 's/^[[:space:]]*- //' | sed 's/[[:space:]]*#.*//' | tr -d '"')
+                ALLOWED_GROUPS+=("$group")
+              elif [[ "$line" =~ ^[[:space:]]*# ]] || [[ -z "$line" ]]; then
+                continue  # skip comments and blank lines
+              else
+                break
+              fi
+            fi
+          done < "$POLICY"
+
+          # Parse repo-specific exceptions
+          REPO_EXCEPTIONS=()
+          in_exceptions=false
+          in_repo=false
+          while IFS= read -r line; do
+            line="${line%$'\r'}"  # strip trailing \r
+            if [[ "$line" =~ exceptions: ]]; then
+              in_exceptions=true
+              continue
+            fi
+            if $in_exceptions; then
+              # Skip comments and blank lines
+              trimmed=$(echo "$line" | sed 's/^[[:space:]]*//')
+              if [[ -z "$trimmed" ]] || [[ "$trimmed" == "#"* ]]; then
+                continue
+              fi
+              # New top-level key ends exceptions block
+              if [[ ! "$line" =~ ^[[:space:]] ]]; then
+                break
+              fi
+              # Check for repo name match (indented key ending with colon)
+              if [[ "$trimmed" == "${REPO_NAME}:" ]]; then
+                in_repo=true
+                continue
+              elif [[ "$trimmed" =~ ^[A-Za-z].*:$ ]] && $in_repo; then
+                in_repo=false
+                continue
+              fi
+              if $in_repo && [[ "$line" =~ ^[[:space:]]*-[[:space:]] ]]; then
+                runner=$(echo "$line" | sed 's/^[[:space:]]*- //' | sed 's/[[:space:]]*#.*//' | tr -d '"')
+                REPO_EXCEPTIONS+=("$runner")
+              fi
+            fi
+          done < "$POLICY"
+
+          # Parse whether private repos default to Stratus self-hosted runners.
+          PRIVATE_REPOS_DEFAULT_SELF_HOSTED=false
+          while IFS= read -r line; do
+            line="${line%$'\r'}"
+            if [[ "$line" =~ private_repos_default_self_hosted:[[:space:]]*(.*)$ ]]; then
+              value=$(echo "${BASH_REMATCH[1]}" | sed 's/[[:space:]]*#.*//' | tr -d '"' | xargs)
+              if [[ "$value" == "true" ]]; then
+                PRIVATE_REPOS_DEFAULT_SELF_HOSTED=true
+              fi
+              break
+            fi
+          done < "$POLICY"
+
+          # Parse private repos that remain GitHub-hosted-primary.
+          GITHUB_HOSTED_PRIMARY_PRIVATE_REPOS=()
+          in_private_opt_outs=false
+          while IFS= read -r line; do
+            line="${line%$'\r'}"
+            if [[ "$line" =~ github_hosted_primary_private_repos: ]]; then
+              in_private_opt_outs=true
+              continue
+            fi
+            if $in_private_opt_outs; then
+              trimmed=$(echo "$line" | sed 's/^[[:space:]]*//')
+              if [[ -z "$trimmed" ]] || [[ "$trimmed" == "#"* ]]; then
+                continue
+              fi
+              if [[ ! "$line" =~ ^[[:space:]] ]]; then
+                break
+              fi
+              if [[ "$line" =~ ^[[:space:]]*-[[:space:]] ]]; then
+                repo=$(echo "$line" | sed 's/^[[:space:]]*- //' | sed 's/[[:space:]]*#.*//' | tr -d '"')
+                GITHUB_HOSTED_PRIMARY_PRIVATE_REPOS+=("$repo")
+              fi
+            fi
+          done < "$POLICY"
+
+          SELF_HOSTED_PRIMARY=false
+          if [[ "$REPO_VISIBILITY" != "public" && "$PRIVATE_REPOS_DEFAULT_SELF_HOSTED" == "true" ]]; then
+            SELF_HOSTED_PRIMARY=true
+          fi
+          for repo in "${GITHUB_HOSTED_PRIMARY_PRIVATE_REPOS[@]}"; do
+            if [[ "$repo" == "$REPO_NAME" ]]; then
+              SELF_HOSTED_PRIMARY=false
+              break
+            fi
+          done
+
+          # Parse GitHub-hosted workflow exceptions for self-hosted-primary repos.
+          GLOBAL_GITHUB_HOSTED_EXCEPTION_WORKFLOWS=()
+          GITHUB_HOSTED_EXCEPTION_WORKFLOWS=()
+          current_hosted_exception_scope=""
+          in_hosted_exceptions=false
+          while IFS= read -r line; do
+            line="${line%$'\r'}"
+            if [[ "$line" =~ github_hosted_exceptions: ]]; then
+              in_hosted_exceptions=true
+              continue
+            fi
+            if $in_hosted_exceptions; then
+              trimmed=$(echo "$line" | sed 's/^[[:space:]]*//')
+              if [[ -z "$trimmed" ]] || [[ "$trimmed" == "#"* ]]; then
+                continue
+              fi
+              if [[ ! "$line" =~ ^[[:space:]] ]]; then
+                break
+              fi
+              if [[ "$trimmed" =~ ^[A-Za-z0-9._-]+:$ ]]; then
+                current_hosted_exception_scope="${trimmed%:}"
+                continue
+              fi
+              if [[ "$line" =~ ^[[:space:]]*-[[:space:]] ]]; then
+                workflow=$(echo "$line" | sed 's/^[[:space:]]*- //' | sed 's/[[:space:]]*#.*//' | tr -d '"')
+                if [[ "$current_hosted_exception_scope" == "_global" ]]; then
+                  GLOBAL_GITHUB_HOSTED_EXCEPTION_WORKFLOWS+=("$workflow")
+                elif [[ "$current_hosted_exception_scope" == "$REPO_NAME" ]]; then
+                  GITHUB_HOSTED_EXCEPTION_WORKFLOWS+=("$workflow")
+                fi
+              fi
+            fi
+          done < "$POLICY"
+
+          # Parse per-repo workflows that must route through the hybrid runner router.
+          HYBRID_OVERFLOW_WORKFLOWS=()
+          in_hybrid_overflow=false
+          in_repo=false
+          while IFS= read -r line; do
+            line="${line%$'\r'}"
+            if [[ "$line" =~ hybrid_overflow_workflows: ]]; then
+              in_hybrid_overflow=true
+              continue
+            fi
+            if $in_hybrid_overflow; then
+              trimmed=$(echo "$line" | sed 's/^[[:space:]]*//')
+              if [[ -z "$trimmed" ]] || [[ "$trimmed" == "#"* ]]; then
+                continue
+              fi
+              if [[ ! "$line" =~ ^[[:space:]] ]]; then
+                break
+              fi
+              if [[ "$trimmed" == "${REPO_NAME}:" ]]; then
+                in_repo=true
+                continue
+              elif [[ "$trimmed" =~ ^[A-Za-z0-9._-]+:$ ]] && $in_repo; then
+                in_repo=false
+                continue
+              fi
+              if $in_repo && [[ "$line" =~ ^[[:space:]]*-[[:space:]] ]]; then
+                workflow=$(echo "$line" | sed 's/^[[:space:]]*- //' | sed 's/[[:space:]]*#.*//' | tr -d '"')
+                HYBRID_OVERFLOW_WORKFLOWS+=("$workflow")
+              fi
+            fi
+          done < "$POLICY"
+
+          # Combine allowed runners
+          ALL_ALLOWED=("${DEFAULT_ALLOWED[@]}" "${REPO_EXCEPTIONS[@]}")
+
+          echo "=== Runner Policy Check ==="
+          echo "Repository: $REPO_NAME"
+          echo "Visibility: $REPO_VISIBILITY"
+          echo "Default allowed: ${DEFAULT_ALLOWED[*]}"
+          if [ ${#ALLOWED_GROUPS[@]} -gt 0 ]; then
+            echo "Allowed groups: ${ALLOWED_GROUPS[*]}"
+          fi
+          if [ ${#REPO_EXCEPTIONS[@]} -gt 0 ]; then
+            echo "Repo exceptions: ${REPO_EXCEPTIONS[*]}"
+          fi
+          if [[ "$SELF_HOSTED_PRIMARY" == "true" ]]; then
+            echo "Self-hosted primary: true"
+            if [ ${#GITHUB_HOSTED_PRIMARY_PRIVATE_REPOS[@]} -gt 0 ]; then
+              echo "GitHub-hosted-primary private repo opt-outs: ${GITHUB_HOSTED_PRIMARY_PRIVATE_REPOS[*]}"
+            fi
+            if [ ${#GITHUB_HOSTED_EXCEPTION_WORKFLOWS[@]} -gt 0 ]; then
+              echo "GitHub-hosted workflow exceptions: ${GITHUB_HOSTED_EXCEPTION_WORKFLOWS[*]}"
+            fi
+            if [ ${#GLOBAL_GITHUB_HOSTED_EXCEPTION_WORKFLOWS[@]} -gt 0 ]; then
+              echo "Global GitHub-hosted workflow exceptions: ${GLOBAL_GITHUB_HOSTED_EXCEPTION_WORKFLOWS[*]}"
+            fi
+            if [ ${#HYBRID_OVERFLOW_WORKFLOWS[@]} -gt 0 ]; then
+              echo "Hybrid overflow workflows: ${HYBRID_OVERFLOW_WORKFLOWS[*]}"
+            fi
+          fi
+          echo ""
+
+          # Current workflow file being scanned (set in the loop below).
+          # Used by get_matrix_values() and is_allowed().
+          CURRENT_WORKFLOW=""
+
+          # Resolve all concrete values for a matrix key from CURRENT_WORKFLOW.
+          # Reads every "KEY: VALUE" line inside any `matrix:` block in the file.
+          get_matrix_values() {
+            local key="$1"
+            local in_matrix=false
+            local matrix_indent=-1
+
+            while IFS= read -r mline; do
+              mline="${mline%$'\r'}"
+              local mtrimmed
+              mtrimmed=$(echo "$mline" | sed 's/^[[:space:]]*//')
+              [[ "$mtrimmed" == "#"* || -z "$mtrimmed" ]] && continue
+              local mleading="${mline%%[^[:space:]]*}"
+              local mindent=${#mleading}
+
+              if [[ "$mtrimmed" == "matrix:" ]]; then
+                in_matrix=true
+                matrix_indent=$mindent
+                continue
+              fi
+
+              if $in_matrix; then
+                # A non-list key at same/lower indent closes the matrix block
+                if [[ $mindent -le $matrix_indent && -n "$mtrimmed" && ! "$mtrimmed" =~ ^- ]]; then
+                  in_matrix=false
+                  matrix_indent=-1
+                  continue
+                fi
+                # Emit value for lines matching "KEY: VALUE"
+                if [[ "$mtrimmed" =~ ^${key}:[[:space:]]+(.*) ]]; then
+                  strip_yaml_value "${BASH_REMATCH[1]}"
+                fi
+              fi
+            done < "$CURRENT_WORKFLOW"
+          }
+
+          # Check a concrete (non-template) runner name against the allowlist.
+          _is_literal_allowed() {
+            local runner="$1"
+            for allowed in "${ALL_ALLOWED[@]}"; do
+              [[ "$runner" == "$allowed" ]] && return 0
+            done
+            return 1
+          }
+
+          # Check whether a runs-on value is permitted.
+          #
+          # Three categories:
+          #   1. workflow_call inputs (inputs.*) - truly dynamic, always allowed.
+          #   2. matrix expressions (matrix.KEY) - resolve the matrix values
+          #      statically from the workflow file and validate each concrete value.
+          #      Violations are added directly to VIOLATIONS[].
+          #   3. All other template expressions - allowed with a warning (env vars,
+          #      conditional expressions, etc. that cannot be resolved statically).
+          #   4. Literal strings - checked against the allowlist.
+          is_allowed() {
+            local runner="$1"
+
+            # 1. workflow_call inputs — resolved at call time, cannot validate statically
+            if [[ "$runner" =~ \$\{\{[[:space:]]*inputs\. ]]; then
+              return 0
+            fi
+
+            # 2. Matrix expressions — extract all matrix.KEY names, resolve concrete
+            #    values from the workflow file, validate each.
+            if [[ "$runner" == *'${'*'matrix.'* ]]; then
+              # Extract every matrix.KEY referenced in the expression
+              local keys=()
+              local tmp="$runner"
+              while [[ "$tmp" =~ matrix\.([a-zA-Z_][a-zA-Z0-9_-]*) ]]; do
+                keys+=("${BASH_REMATCH[1]}")
+                tmp="${tmp#*matrix.${BASH_REMATCH[1]}}"
+              done
+
+              if [[ ${#keys[@]} -eq 0 ]]; then
+                # Unrecognised matrix pattern — allow
+                return 0
+              fi
+
+              local found_any_values=false
+              local all_ok=true
+
+              for key in "${keys[@]}"; do
+                local resolved_vals
+                resolved_vals=$(get_matrix_values "$key")
+                while IFS= read -r val; do
+                  [[ -z "$val" ]] && continue
+                  found_any_values=true
+                  if ! _is_literal_allowed "$val"; then
+                    VIOLATIONS+=("$(basename "$CURRENT_WORKFLOW"): matrix.$key resolves to unapproved runner '$val'")
+                    all_ok=false
+                  fi
+                done <<< "$resolved_vals"
+              done
+
+              if [[ "$found_any_values" == "false" ]]; then
+                # No concrete values found — warn and allow
+                echo "::warning::file=$(basename "$CURRENT_WORKFLOW")::Cannot statically resolve matrix runner expression '$runner' — ensure matrix values comply with runner policy"
+                return 0
+              fi
+
+              [[ "$all_ok" == "true" ]] && return 0 || return 1
+            fi
+
+            # 3. Other template expressions (env vars, conditionals, etc.) — allow with warning
+            if [[ "$runner" == *'${'* ]]; then
+              echo "::warning::file=$(basename "$CURRENT_WORKFLOW")::Non-matrix template expression '$runner' cannot be validated statically"
+              return 0
+            fi
+
+            # 4. Literal runner name — check allowlist
+            _is_literal_allowed "$runner"
+          }
+
+          is_group_allowed() {
+            local group="$1"
+
+            if [[ "$group" == *'${'* ]]; then
+              return 0
+            fi
+
+            for allowed in "${ALLOWED_GROUPS[@]}"; do
+              if [[ "$group" == "$allowed" ]]; then
+                return 0
+              fi
+            done
+
+            return 1
+          }
+
+          strip_yaml_value() {
+            echo "$1" | sed 's/[[:space:]]*#.*//' | tr -d "'\"" | xargs
+          }
+
+          is_github_hosted() {
+            local runner="$1"
+            [[ "$runner" =~ ^(ubuntu|macos|windows)- ]]
+          }
+
+          is_github_hosted_exception_workflow() {
+            local filename="$1"
+            for exception_workflow in "${GLOBAL_GITHUB_HOSTED_EXCEPTION_WORKFLOWS[@]}"; do
+              [[ "$filename" == "$exception_workflow" ]] && return 0
+            done
+            for exception_workflow in "${GITHUB_HOSTED_EXCEPTION_WORKFLOWS[@]}"; do
+              [[ "$filename" == "$exception_workflow" ]] && return 0
+            done
+            return 1
+          }
+
+          is_hybrid_overflow_expression() {
+            local runner="$1"
+            [[ "$runner" =~ ^\$\{\{[[:space:]]*needs\.[A-Za-z0-9_-]+\.outputs\.target_runner[[:space:]]*\}\}$ ]]
+          }
+
+          is_hybrid_overflow_workflow() {
+            local filename="$1"
+            for listed_workflow in "${HYBRID_OVERFLOW_WORKFLOWS[@]}"; do
+              [[ "$filename" == "$listed_workflow" ]] && return 0
+            done
+            return 1
+          }
+
+          workflow_calls_runner_router() {
+            grep -Eq '^[[:space:]]*uses:[[:space:]]+.*runner-router\.yml(@[^[:space:]]*)?[[:space:]]*$' "$CURRENT_WORKFLOW"
+          }
+
+          workflow_uses_hybrid_target_runner() {
+            grep -Eq '^[[:space:]]*runs-on:[[:space:]]*\$\{\{[[:space:]]*needs\.[A-Za-z0-9_-]+\.outputs\.target_runner[[:space:]]*\}\}[[:space:]]*$' "$CURRENT_WORKFLOW"
+          }
+
+          check_required_hybrid_overflow_wiring() {
+            local filename="$1"
+
+            if ! is_hybrid_overflow_workflow "$filename"; then
+              return
+            fi
+
+            if ! workflow_calls_runner_router; then
+              VIOLATIONS+=("$filename: listed in hybrid_overflow_workflows but does not call runner-router.yml")
+            fi
+
+            if ! workflow_uses_hybrid_target_runner; then
+              VIOLATIONS+=("$filename: listed in hybrid_overflow_workflows but no job uses needs.<route>.outputs.target_runner")
+            fi
+          }
+
+          check_runner() {
+            local filename="$1"
+            local runner="$2"
+            # For matrix expressions, is_allowed() adds violations directly
+            # (with the resolved concrete values for clearer error messages).
+            if [[ "$runner" == *'${'*'matrix.'* ]]; then
+              is_allowed "$runner" || true
+              return
+            fi
+            if is_hybrid_overflow_expression "$runner"; then
+              if is_hybrid_overflow_workflow "$filename"; then
+                return
+              fi
+              VIOLATIONS+=("$filename: hybrid overflow expression '$runner' is only allowed for workflows listed in hybrid_overflow_workflows")
+              return
+            fi
+            if [[ "$REPO_VISIBILITY" == "public" ]] && ! is_github_hosted "$runner"; then
+              VIOLATIONS+=("$filename: public repos must use GitHub-hosted runners only (found $runner)")
+              return
+            fi
+            if ! is_allowed "$runner"; then
+              VIOLATIONS+=("$filename: $runner")
+              return
+            fi
+            if [[ "$SELF_HOSTED_PRIMARY" == "true" ]] && is_github_hosted "$runner" && ! is_github_hosted_exception_workflow "$filename"; then
+              VIOLATIONS+=("$filename: GitHub-hosted runner '$runner' is not allowed; private repos default to Stratus self-hosted lanes except for explicit control-plane/bootstrap exceptions")
+            fi
+          }
+
+          check_group() {
+            local filename="$1"
+            local group="$2"
+            if ! is_group_allowed "$group"; then
+              VIOLATIONS+=("$filename: group=$group")
+            fi
+          }
+
+          validate_runs_on_mapping() {
+            local filename="$1"
+            local group="$2"
+            shift 2
+            local labels=("$@")
+
+            if [[ -n "$group" ]]; then
+              check_group "$filename" "$group"
+            fi
+
+            for label in "${labels[@]}"; do
+              [[ -n "$label" ]] || continue
+              check_runner "$filename" "$label"
+            done
+          }
+
+          # Scan all workflow files
+          if [ ! -d .github/workflows ]; then
+            echo "No .github/workflows directory found. Skipping."
+            exit 0
+          fi
+
+          for workflow in .github/workflows/*.yml .github/workflows/*.yaml; do
+            [ -f "$workflow" ] || continue
+
+            filename=$(basename "$workflow")
+
+            # Skip self (contains runs-on in script text)
+            if [[ "$filename" == "runner-policy-check.yml" ]]; then
+              continue
+            fi
+
+            CURRENT_WORKFLOW="$workflow"
+            check_required_hybrid_overflow_wiring "$filename"
+
+            in_runs_on_block=false
+            runs_on_indent=0
+            in_labels_list=false
+            labels_indent=0
+            current_group=""
+            current_labels=()
+
+            # Extract runs-on values
+            while IFS= read -r line; do
+              # Skip comment lines
+              trimmed_line=$(echo "$line" | sed 's/^[[:space:]]*//')
+              leading_ws="${line%%[^[:space:]]*}"
+              current_indent=${#leading_ws}
+              if [[ "$trimmed_line" == "#"* ]]; then
+                continue
+              fi
+
+              if $in_runs_on_block; then
+                if [[ -n "$trimmed_line" && $current_indent -le $runs_on_indent ]]; then
+                  validate_runs_on_mapping "$filename" "$current_group" "${current_labels[@]}"
+                  in_runs_on_block=false
+                  in_labels_list=false
+                  current_group=""
+                  current_labels=()
+                else
+                  if $in_labels_list; then
+                    if [[ $current_indent -gt $labels_indent && "$trimmed_line" =~ ^-[[:space:]] ]]; then
+                      label=$(strip_yaml_value "${trimmed_line#- }")
+                      if [[ -n "$label" ]]; then
+                        current_labels+=("$label")
+                      fi
+                      continue
+                    else
+                      in_labels_list=false
+                    fi
+                  fi
+
+                  if $in_runs_on_block; then
+                    if [[ "$trimmed_line" =~ ^group:[[:space:]]*(.*)$ ]]; then
+                      current_group=$(strip_yaml_value "${BASH_REMATCH[1]}")
+                      continue
+                    fi
+
+                    if [[ "$trimmed_line" =~ ^labels:[[:space:]]*(.*)$ ]]; then
+                      labels_raw="${BASH_REMATCH[1]}"
+                      labels_value=$(strip_yaml_value "$labels_raw")
+
+                      if [[ -z "$labels_value" ]]; then
+                        in_labels_list=true
+                        labels_indent=$current_indent
+                        continue
+                      fi
+
+                      if [[ "$labels_value" == \[*\] ]]; then
+                        labels_inline="${labels_value#[}"
+                        labels_inline="${labels_inline%]}"
+                        IFS=',' read -ra labels_array <<< "$labels_inline"
+                        for label in "${labels_array[@]}"; do
+                          label=$(strip_yaml_value "$label")
+                          if [[ -n "$label" ]]; then
+                            current_labels+=("$label")
+                          fi
+                        done
+                      else
+                        current_labels+=("$labels_value")
+                      fi
+                      continue
+                    fi
+
+                    continue
+                  fi
+                fi
+              fi
+
+              if [[ "$line" =~ ^([[:space:]]*)runs-on:[[:space:]]*$ ]]; then
+                in_runs_on_block=true
+                runs_on_indent=${#BASH_REMATCH[1]}
+                in_labels_list=false
+                current_group=""
+                current_labels=()
+                continue
+              fi
+
+              if [[ "$line" =~ runs-on: ]]; then
+                runner=$(strip_yaml_value "$(echo "$line" | sed 's/.*runs-on:[[:space:]]*//')")
+
+                # Skip empty or array-start lines
+                if [[ "$runner" == "[" ]] || [[ -z "$runner" ]]; then
+                  continue
+                fi
+
+                # Handle inline array: [self-hosted, macOS]
+                if [[ "$runner" == \[*\] ]]; then
+                  runner_values="${runner#[}"
+                  runner_values="${runner_values%]}"
+                  IFS=',' read -ra runner_array <<< "$runner_values"
+                  for runner_item in "${runner_array[@]}"; do
+                    runner_item=$(strip_yaml_value "$runner_item")
+                    if [[ -n "$runner_item" ]]; then
+                      check_runner "$filename" "$runner_item"
+                    fi
+                  done
+                  continue
+                fi
+
+                check_runner "$filename" "$runner"
+              fi
+            done < "$workflow"
+
+            if $in_runs_on_block; then
+              validate_runs_on_mapping "$filename" "$current_group" "${current_labels[@]}"
+            fi
+          done
+
+          # Report results
+          if [ ${#VIOLATIONS[@]} -gt 0 ]; then
+            echo "::error::Runner policy violations found!"
+            echo ""
+            echo "The following workflows use runners not allowed by org policy:"
+            echo ""
+            for v in "${VIOLATIONS[@]}"; do
+              echo "  - $v"
+            done
+            echo ""
+            echo "Allowed runners for '$REPO_NAME':"
+            for a in "${ALL_ALLOWED[@]}"; do
+              echo "  - $a"
+            done
+            echo ""
+            echo "To add an exception, update: https://github.com/scheduler-systems/infra/blob/main/github/runner-policy.yml"
+            echo "Then update the embedded policy in: .github/workflows/runner-policy-check.yml"
+            exit 1
+          else
+            echo "All workflows comply with runner policy."
+          fi
