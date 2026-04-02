@@ -175,6 +175,7 @@ jobs:
               - codeql-analysis.yml
               - collect-test-plan.yml
               - dependency-scan.yml
+              - deploy-api.yml
               - deploy-governance-serverless.yml
               - domain-allowlist-check.yml
               - e2e.yml
