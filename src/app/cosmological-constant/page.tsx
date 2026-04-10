@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { BlockMath, InlineMath } from "@/components/Math";
 import VacuumEnergyComparison from "@/components/VacuumEnergyComparison";
 
@@ -13,12 +14,12 @@ export default function CosmologicalConstantPage() {
     <div className="flex flex-col min-h-screen bg-background text-foreground">
       {/* Header */}
       <nav className="px-6 py-4 border-b border-surface-light">
-        <a
+        <Link
           href="/"
           className="text-sm font-mono text-muted hover:text-accent transition-colors"
         >
           &larr; Imagined Cosmos
-        </a>
+        </Link>
       </nav>
 
       <article className="max-w-4xl mx-auto w-full px-6 py-16">
