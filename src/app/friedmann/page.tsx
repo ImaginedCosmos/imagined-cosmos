@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
 import { BlockMath, InlineMath } from "@/components/Math";
 import ExpansionSimulation from "@/components/ExpansionSimulation";
 
@@ -13,12 +15,12 @@ export default function FriedmannPage() {
     <div className="flex flex-col min-h-screen bg-background text-foreground">
       {/* Header */}
       <nav className="px-6 py-4 border-b border-surface-light">
-        <a
+        <Link
           href="/"
           className="text-sm font-mono text-muted hover:text-accent transition-colors"
         >
           &larr; Imagined Cosmos
-        </a>
+        </Link>
       </nav>
 
       <article className="max-w-4xl mx-auto w-full px-6 py-16">
@@ -36,6 +38,16 @@ export default function FriedmannPage() {
             observed expansion. They predict everything from the Big Bang to the
             accelerating cosmos we see today.
           </p>
+          <div className="mt-10 overflow-hidden rounded-[2rem] border border-surface-light bg-surface/60 p-3 shadow-[0_0_70px_rgba(124,58,237,0.18)]">
+            <Image
+              src="/visuals/friedmann-expansion.svg"
+              alt="An abstract illustration of expanding cosmic shells and galaxies moving apart."
+              width={1600}
+              height={900}
+              priority
+              className="h-auto w-full rounded-[1.35rem]"
+            />
+          </div>
         </header>
 
         {/* The Equations */}
@@ -93,65 +105,78 @@ export default function FriedmannPage() {
         {/* Key parameters */}
         <section className="mb-16">
           <h2 className="text-2xl font-bold mb-6">Measured Values</h2>
-          <div className="rounded-xl bg-surface border border-surface-light overflow-hidden">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-surface-light text-left">
-                  <th className="px-6 py-3 text-muted font-mono">Parameter</th>
-                  <th className="px-6 py-3 text-muted font-mono">Symbol</th>
-                  <th className="px-6 py-3 text-muted font-mono">
-                    Value (Planck 2018)
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="text-foreground">
-                <tr className="border-b border-surface-light/50">
-                  <td className="px-6 py-3">Hubble constant</td>
-                  <td className="px-6 py-3">
-                    <InlineMath math="H_0" />
-                  </td>
-                  <td className="px-6 py-3 font-mono text-accent">
-                    67.4 ± 0.5 km/s/Mpc
-                  </td>
-                </tr>
-                <tr className="border-b border-surface-light/50">
-                  <td className="px-6 py-3">Matter density</td>
-                  <td className="px-6 py-3">
-                    <InlineMath math="\Omega_m" />
-                  </td>
-                  <td className="px-6 py-3 font-mono text-accent">
-                    0.315 ± 0.007
-                  </td>
-                </tr>
-                <tr className="border-b border-surface-light/50">
-                  <td className="px-6 py-3">Dark energy density</td>
-                  <td className="px-6 py-3">
-                    <InlineMath math="\Omega_\Lambda" />
-                  </td>
-                  <td className="px-6 py-3 font-mono text-accent">
-                    0.685 ± 0.007
-                  </td>
-                </tr>
-                <tr className="border-b border-surface-light/50">
-                  <td className="px-6 py-3">Radiation density</td>
-                  <td className="px-6 py-3">
-                    <InlineMath math="\Omega_r" />
-                  </td>
-                  <td className="px-6 py-3 font-mono text-accent">
-                    9.1 × 10⁻⁵
-                  </td>
-                </tr>
-                <tr>
-                  <td className="px-6 py-3">Equation of state</td>
-                  <td className="px-6 py-3">
-                    <InlineMath math="w_0" />
-                  </td>
-                  <td className="px-6 py-3 font-mono text-accent">
-                    −1.03 ± 0.03
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+          <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_19rem]">
+            <div className="rounded-xl bg-surface border border-surface-light overflow-hidden">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-surface-light text-left">
+                    <th className="px-6 py-3 text-muted font-mono">
+                      Parameter
+                    </th>
+                    <th className="px-6 py-3 text-muted font-mono">Symbol</th>
+                    <th className="px-6 py-3 text-muted font-mono">
+                      Value (Planck 2018)
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="text-foreground">
+                  <tr className="border-b border-surface-light/50">
+                    <td className="px-6 py-3">Hubble constant</td>
+                    <td className="px-6 py-3">
+                      <InlineMath math="H_0" />
+                    </td>
+                    <td className="px-6 py-3 font-mono text-accent">
+                      67.4 ± 0.5 km/s/Mpc
+                    </td>
+                  </tr>
+                  <tr className="border-b border-surface-light/50">
+                    <td className="px-6 py-3">Matter density</td>
+                    <td className="px-6 py-3">
+                      <InlineMath math="\Omega_m" />
+                    </td>
+                    <td className="px-6 py-3 font-mono text-accent">
+                      0.315 ± 0.007
+                    </td>
+                  </tr>
+                  <tr className="border-b border-surface-light/50">
+                    <td className="px-6 py-3">Dark energy density</td>
+                    <td className="px-6 py-3">
+                      <InlineMath math="\Omega_\Lambda" />
+                    </td>
+                    <td className="px-6 py-3 font-mono text-accent">
+                      0.685 ± 0.007
+                    </td>
+                  </tr>
+                  <tr className="border-b border-surface-light/50">
+                    <td className="px-6 py-3">Radiation density</td>
+                    <td className="px-6 py-3">
+                      <InlineMath math="\Omega_r" />
+                    </td>
+                    <td className="px-6 py-3 font-mono text-accent">
+                      9.1 × 10⁻⁵
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="px-6 py-3">Equation of state</td>
+                    <td className="px-6 py-3">
+                      <InlineMath math="w_0" />
+                    </td>
+                    <td className="px-6 py-3 font-mono text-accent">
+                      −1.03 ± 0.03
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div className="overflow-hidden rounded-xl border border-surface-light bg-surface/70 p-3">
+              <Image
+                src="/visuals/friedmann-scale-factor.svg"
+                alt="A scale-factor inspired visualization showing the expansion curve steepening over cosmic time."
+                width={1200}
+                height={900}
+                className="h-auto w-full rounded-[1rem]"
+              />
+            </div>
           </div>
         </section>
 
