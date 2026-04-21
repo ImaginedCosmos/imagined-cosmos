@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: imagined-cosmos
+  namespace: apps
+  labels:
+    app: imagined-cosmos
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: imagined-cosmos
+  template:
+    metadata:
+      labels:
+        app: imagined-cosmos
+    spec:
+      containers:
+        - name: app
+          image: europe-west4-docker.pkg.dev/scheduler-systems-web/cosmos/imagined-cosmos:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: HOSTNAME
+              value: "0.0.0.0"
+            - name: PORT
+              value: "3000"
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "1000m"
+              memory: "512Mi"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+      imagePullSecrets:
+        - name: ar-pull-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: imagined-cosmos
+  namespace: apps
+  labels:
+    app: imagined-cosmos
+spec:
+  selector:
+    app: imagined-cosmos
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+  type: ClusterIP

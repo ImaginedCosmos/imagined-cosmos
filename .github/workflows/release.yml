@@ -12,8 +12,9 @@ permissions:
 env:
   GCP_PROJECT: scheduler-systems-web
   GCP_REGION: europe-west4
-  SERVICE_NAME: imagined-cosmos-prod
   AR_REPO: europe-west4-docker.pkg.dev/scheduler-systems-web/cosmos
+  K8S_NAMESPACE: apps
+  K8S_DEPLOYMENT: imagined-cosmos
 
 jobs:
   route:
@@ -25,11 +26,13 @@ jobs:
       contents: read
     secrets: inherit
 
-  deploy:
-    name: Build & Deploy
+  build:
+    name: Build & Push
     needs: route
     runs-on: ${{ needs.route.outputs.target_runner }}
     timeout-minutes: 15
+    outputs:
+      image: ${{ steps.meta.outputs.image }}
 
     steps:
       - name: Checkout
@@ -48,28 +51,40 @@ jobs:
         run: gcloud auth configure-docker europe-west4-docker.pkg.dev --quiet
 
       - name: Build and push image
+        id: meta
         run: |
           IMAGE="${AR_REPO}/imagined-cosmos:${GITHUB_SHA}"
           docker buildx build --tag "${IMAGE}" --push .
-          echo "IMAGE=${IMAGE}" >> $GITHUB_ENV
+          echo "image=${IMAGE}" >> $GITHUB_OUTPUT
 
-      - name: Deploy to Cloud Run
+  rollout:
+    name: Rollout to k3s
+    needs: build
+    runs-on: agents-medium-runc-x64
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Apply manifests (idempotent)
+        run: kubectl apply -f k8s/deployment.yaml
+
+      - name: Update deployment image
         run: |
-          gcloud run deploy "${SERVICE_NAME}" \
-            --image "${IMAGE}" \
-            --region "${GCP_REGION}" \
-            --project "${GCP_PROJECT}" \
-            --port 3000 \
-            --cpu 1 \
-            --memory 512Mi \
-            --max-instances 4 \
-            --concurrency 80 \
-            --set-env-vars "NODE_ENV=production,HOSTNAME=0.0.0.0" \
-            --quiet
+          kubectl set image deployment/${K8S_DEPLOYMENT} \
+            app=${{ needs.build.outputs.image }} \
+            -n ${K8S_NAMESPACE}
+
+      - name: Wait for rollout
+        run: |
+          kubectl rollout status deployment/${K8S_DEPLOYMENT} \
+            -n ${K8S_NAMESPACE} \
+            --timeout=300s
 
       - name: Health check
         run: |
-          sleep 10
+          sleep 5
           STATUS=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 10 https://cosmos.scheduler-systems.com)
           if [ "$STATUS" = "200" ]; then
             echo "Health check passed (HTTP $STATUS)"

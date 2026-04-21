@@ -13,9 +13,24 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Imagined Cosmos — Computational Physics Meets Generative AI",
+  title: "Imagined Cosmos — Continuing where Einstein left us",
   description:
-    "Exploring dark energy, the cosmological constant, and general relativity through code, simulation, and AI-generated visualization.",
+    "Dark energy, the cosmological constant, and a proposed solution — grounded in 106 years of observation since Einstein.",
+  metadataBase: new URL("https://cosmos.scheduler-systems.com"),
+  openGraph: {
+    type: "website",
+    siteName: "Imagined Cosmos",
+    title: "Imagined Cosmos — Continuing where Einstein left us",
+    description:
+      "Dark energy, the cosmological constant, and a proposed solution — grounded in 106 years of observation since Einstein.",
+    url: "https://cosmos.scheduler-systems.com",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Imagined Cosmos — Continuing where Einstein left us",
+    description:
+      "Dark energy, the cosmological constant, and a proposed solution — grounded in 106 years of observation since Einstein.",
+  },
 };
 
 export default function RootLayout({

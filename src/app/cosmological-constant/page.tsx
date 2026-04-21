@@ -2,25 +2,30 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { BlockMath, InlineMath } from "@/components/Math";
 import VacuumEnergyComparison from "@/components/VacuumEnergyComparison";
+import ChapterNav from "@/components/ChapterNav";
+import ChapterFooterNav from "@/components/ChapterFooterNav";
 
 export const metadata: Metadata = {
   title: "The Cosmological Constant Problem — Imagined Cosmos",
   description:
     "The worst prediction in physics: why quantum field theory disagrees with observation by 120 orders of magnitude, and what it means for our understanding of the universe.",
+  openGraph: {
+    title: "The Cosmological Constant Problem — Imagined Cosmos",
+    description:
+      "The worst prediction in physics: why quantum field theory disagrees with observation by 120 orders of magnitude, and what it means for our understanding of the universe.",
+    url: "https://cosmos.scheduler-systems.com/cosmological-constant",
+  },
+  twitter: {
+    title: "The Cosmological Constant Problem — Imagined Cosmos",
+    description:
+      "The worst prediction in physics: why quantum field theory disagrees with observation by 120 orders of magnitude, and what it means for our understanding of the universe.",
+  },
 };
 
 export default function CosmologicalConstantPage() {
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
-      {/* Header */}
-      <nav className="px-6 py-4 border-b border-surface-light">
-        <Link
-          href="/"
-          className="text-sm font-mono text-muted hover:text-accent transition-colors"
-        >
-          &larr; Imagined Cosmos
-        </Link>
-      </nav>
+      <ChapterNav current="02" />
 
       <article className="max-w-4xl mx-auto w-full px-6 py-16">
         {/* Title */}
@@ -176,7 +181,15 @@ export default function CosmologicalConstantPage() {
 
         {/* Proposed Solutions */}
         <section className="mb-16">
-          <h2 className="text-2xl font-bold mb-6">Proposed Solutions</h2>
+          <div className="flex items-baseline justify-between mb-6 flex-wrap gap-3">
+            <h2 className="text-2xl font-bold">Proposed Solutions</h2>
+            <Link
+              href="/models"
+              className="text-xs font-mono text-accent hover:text-violet-300 transition-colors"
+            >
+              Why each falls short →
+            </Link>
+          </div>
           <div className="grid grid-cols-1 gap-6">
             <SolutionCard
               number={1}
@@ -211,6 +224,38 @@ export default function CosmologicalConstantPage() {
           </div>
         </section>
 
+        {/* DESI 2024 update */}
+        <section className="mb-16">
+          <div className="rounded-2xl border border-amber-700/40 bg-amber-950/10 p-7">
+            <p className="text-xs font-mono tracking-widest uppercase text-amber-400 mb-3">
+              Update — DESI 2024 DR1
+            </p>
+            <h3 className="text-xl font-bold mb-3">
+              A new clue: dark energy may not be constant
+            </h3>
+            <p className="text-muted leading-relaxed mb-4">
+              Since the five proposed solutions above were formalized, the DESI
+              survey released its first data: 6 million galaxy spectra measuring
+              the BAO standard ruler across cosmic time. The result deviates from{" "}
+              <InlineMath math="w = -1" /> at 2.5–3.9σ — suggesting dark energy
+              is evolving, not fixed. The best-fit CPL parameters are{" "}
+              <InlineMath math="w_0 \approx -0.73,\ w_a \approx -1.05" />.
+            </p>
+            <p className="text-muted leading-relaxed">
+              This rules out a pure cosmological constant if confirmed at higher
+              significance. It shifts the question from &ldquo;why is{" "}
+              <InlineMath math="\Lambda" /> so small?&rdquo; to &ldquo;why is
+              dark energy dynamical, and what determines its evolution?&rdquo;
+            </p>
+            <Link
+              href="/since-einstein"
+              className="mt-5 inline-flex items-center gap-2 text-sm font-mono text-amber-300 hover:text-amber-200 transition-colors"
+            >
+              Chapter 03: The evidence in full →
+            </Link>
+          </div>
+        </section>
+
         {/* Computational Approach */}
         <section className="mb-16">
           <h2 className="text-2xl font-bold mb-6">Our Approach</h2>
@@ -238,8 +283,9 @@ export default function CosmologicalConstantPage() {
         </section>
       </article>
 
-      {/* Footer */}
-      <footer className="px-6 py-12 border-t border-surface-light text-center text-sm text-muted mt-auto">
+      <ChapterFooterNav current="02" />
+
+      <footer className="px-6 py-8 border-t border-surface-light text-center text-sm text-muted mt-auto">
         <p>
           Imagined Cosmos — a{" "}
           <a
