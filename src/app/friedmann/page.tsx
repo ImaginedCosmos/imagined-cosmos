@@ -3,25 +3,30 @@ import Image from "next/image";
 import Link from "next/link";
 import { BlockMath, InlineMath } from "@/components/Math";
 import ExpansionSimulation from "@/components/ExpansionSimulation";
+import ChapterNav from "@/components/ChapterNav";
+import ChapterFooterNav from "@/components/ChapterFooterNav";
 
 export const metadata: Metadata = {
   title: "Friedmann Equations — Imagined Cosmos",
   description:
     "The master equations of cosmic expansion, derived and simulated. Interactive visualization of dark energy's effect on the universe.",
+  openGraph: {
+    title: "Friedmann Equations — Imagined Cosmos",
+    description:
+      "The master equations of cosmic expansion, derived and simulated. Interactive visualization of dark energy's effect on the universe.",
+    url: "https://cosmos.scheduler-systems.com/friedmann",
+  },
+  twitter: {
+    title: "Friedmann Equations — Imagined Cosmos",
+    description:
+      "The master equations of cosmic expansion, derived and simulated. Interactive visualization of dark energy's effect on the universe.",
+  },
 };
 
 export default function FriedmannPage() {
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
-      {/* Header */}
-      <nav className="px-6 py-4 border-b border-surface-light">
-        <Link
-          href="/"
-          className="text-sm font-mono text-muted hover:text-accent transition-colors"
-        >
-          &larr; Imagined Cosmos
-        </Link>
-      </nav>
+      <ChapterNav current="01" />
 
       <article className="max-w-4xl mx-auto w-full px-6 py-16">
         {/* Title */}
@@ -156,13 +161,22 @@ export default function FriedmannPage() {
                       9.1 × 10⁻⁵
                     </td>
                   </tr>
-                  <tr>
+                  <tr className="border-b border-surface-light/50">
                     <td className="px-6 py-3">Equation of state</td>
                     <td className="px-6 py-3">
                       <InlineMath math="w_0" />
                     </td>
                     <td className="px-6 py-3 font-mono text-accent">
-                      −1.03 ± 0.03
+                      −1.03 ± 0.03 <span className="text-muted text-xs">(Planck 2018)</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="px-6 py-3 text-amber-300/80">w₀, wₐ (DESI 2024)</td>
+                    <td className="px-6 py-3">
+                      <InlineMath math="w_0, w_a" />
+                    </td>
+                    <td className="px-6 py-3 font-mono text-amber-300/80">
+                      −0.73, −1.05 <span className="text-muted text-xs">(2.5–3.9σ from Λ = const)</span>
                     </td>
                   </tr>
                 </tbody>
@@ -256,8 +270,9 @@ export default function FriedmannPage() {
         </section>
       </article>
 
-      {/* Footer */}
-      <footer className="px-6 py-12 border-t border-surface-light text-center text-sm text-muted mt-auto">
+      <ChapterFooterNav current="01" />
+
+      <footer className="px-6 py-8 border-t border-surface-light text-center text-sm text-muted mt-auto">
         <p>
           Imagined Cosmos — a{" "}
           <a
