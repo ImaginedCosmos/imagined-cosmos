@@ -9,7 +9,7 @@ concurrency:
 permissions: {}
 jobs:
   route:
-    uses: Scheduler-Systems/infra/.github/workflows/runner-router.yml@main
+    uses: Scheduler-Systems/stratus/.github/workflows/runner-router.yml@main
     with:
       workflow_key: pr-governance.yml
     permissions:

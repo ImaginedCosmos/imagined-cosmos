@@ -35,7 +35,7 @@ jobs:
 
   runner-policy:
     if: ${{ !cancelled() }}
-    uses: Scheduler-Systems/infra/.github/workflows/runner-policy-check.yml@main
+    uses: Scheduler-Systems/stratus/.github/workflows/runner-policy-check.yml@main
     permissions:
       contents: read
     secrets: inherit
