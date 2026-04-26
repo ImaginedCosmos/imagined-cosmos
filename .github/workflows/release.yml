@@ -20,7 +20,7 @@ jobs:
   route:
     uses: Scheduler-Systems/stratus/.github/workflows/runner-router.yml@main
     with:
-      workflow_key: release.yml
+      tier: standard
     permissions:
       actions: read
       contents: read
