@@ -1,0 +1,192 @@
+# Imagined Cosmos — Reproduction Note
+
+**A dependency-free reference implementation of the Running Vacuum Model and its
+fit to DESI DR1 / Planck 2018 / SH0ES 2022**
+
+> **Status: reproduction note, not original research.** This document re-derives
+> and re-implements established, peer-reviewed results. It claims no new theory,
+> no new measurement, and no priority. Every physical statement below traces to
+> the cited literature. The purpose is pedagogical and engineering: to show that
+> the published Running Vacuum Model (RVM) phenomenology can be reproduced
+> end-to-end in a few hundred lines of dependency-free code, and to make the
+> calculation auditable and runnable by anyone.
+
+---
+
+## 1. Scope and disclaimer
+
+The cosmological model implemented in this repository — a cosmological "constant"
+whose value runs with the Hubble rate `H` — is the **Running Vacuum Model**, a
+research program developed over more than a decade by Solà Peracaula, Basilakos,
+Polarski, de Cruz Pérez, and collaborators. We reproduce three things:
+
+1. the RVM modified-Friedmann equation and its linearised mapping onto the
+   Chevallier–Polarski–Linder (CPL) equation-of-state parameters `(w0, wa)`;
+2. a transparent χ² fit of the single running coefficient `ν` to the published
+   DESI DR1 + CMB + SN compressed `(w0, wa)` posterior; and
+3. the recovery of a small, positive `ν` and a dynamical-dark-energy fit
+   consistent in sign and order of magnitude with the literature.
+
+Within the repository and UI the implementation is packaged under the label
+"CVC." **CVC is not a distinct or competing theory.** It is shorthand for this
+project's self-contained encoding of the published RVM equations of state; the
+name carries no physical claim beyond what the citations support.
+
+What we **do not** do: solve the cosmological-constant problem, run a Boltzmann
+code, use raw likelihoods, perform a full MCMC, or marginalise over the complete
+parameter set. The fit uses compressed summary statistics only.
+
+## 2. The cosmological-constant problem (background, cited)
+
+Quantum field theory estimates of the vacuum energy density exceed the observed
+dark-energy density by ~120 orders of magnitude — "the worst prediction in
+physics" (Weinberg 1989; Carroll 2001). The observed late-time acceleration
+(Riess et al. 1998; Perlmutter et al. 1999) is well described by a constant `Λ`
+in the six-parameter ΛCDM model (Spergel et al. 2003; Planck 2018), but ΛCDM
+leaves both the magnitude and the dynamical status of `Λ` unexplained. Two
+empirical pressures motivate exploring a *dynamical* dark energy:
+
+- the **Hubble tension**: CMB-inferred `H0 = 67.4 ± 0.5` (Planck 2018) vs the
+  local distance-ladder `H0 = 73.04 ± 1.04` (SH0ES, Riess et al. 2022), a ~5σ
+  discrepancy; and
+- the **DESI DR1 result** (DESI Collaboration 2024): combined with CMB and SN,
+  the CPL fit prefers `w0 ≈ −0.73, wa ≈ −1.05`, deviating from `(w0, wa) = (−1, 0)`
+  at 2.5–3.9σ.
+
+## 3. The Running Vacuum Model (re-derivation)
+
+### 3.1 Vacuum density running
+
+The RVM posits a renormalisation-group-style running of the vacuum density with
+the cosmic expansion scale:
+
+```
+ρ_Λ(H) = ρ_Λ0 + (3 ν / 8π) M_P² (H² − H0²)   [ + (ν2 / ...) M_P²(H⁴ − H0⁴)/H0² ]
+```
+
+where `ν` is a small dimensionless coefficient (`ν = 0` ⇒ ΛCDM) and `ν2`
+governs an optional higher-order `H⁴` term relevant only in the early universe.
+This is the form studied in Basilakos, Polarski & Solà (2013) and in the
+Solà Peracaula & de Cruz Pérez (2022, 2024) phenomenology papers.
+
+### 3.2 Modified Friedmann equation (H²-only case)
+
+Imposing covariant conservation on the matter + running-vacuum system and
+substituting the running term yields, for the `H²`-only model, the closed form
+
+```
+E²(z) = H²(z)/H0² = [ Ω_m0 (1+z)³ + Ω_Λ0 − ν ] / (1 − ν).
+```
+
+`ν = 0` recovers the flat-ΛCDM expression `E²(z) = Ω_m0(1+z)³ + Ω_Λ0`. This is
+the relation implemented analytically in `src/lib/physics/theory.ts` and
+cross-checked numerically in `eval/eval.mjs`.
+
+### 3.3 Linearised CPL mapping
+
+Expanding the effective dark-energy equation of state near `z = 0` gives, to
+first order in `ν`, the compact mapping used throughout:
+
+```
+w0 = −1 + ν α,    wa = −3 ν α,    α ≡ Ω_m0 / Ω_Λ0 ≈ 0.4599 (Planck 2018).
+```
+
+Eliminating `ν` gives the RVM consistency relation `wa = 3(1 + w0)`, i.e. the
+model lives on a line in the `(w0, wa)` plane — a strong, falsifiable prediction.
+The `H⁴` extension shifts the model off this line in a controlled way; see §6.
+
+## 4. Data (public summary statistics)
+
+| Quantity | Value | Source |
+|---|---|---|
+| `Ω_m, Ω_Λ, H0` | 0.315, 0.685, 67.4 | Planck 2018 (arXiv:1807.06209) |
+| `H0` (local) | 73.04 ± 1.04 | SH0ES, Riess+ 2022 (arXiv:2112.04510) |
+| `w0` | −0.727 ± 0.067 | DESI 2024 VI (arXiv:2404.03002) |
+| `wa` | −1.05 ± 0.27 | DESI 2024 VI |
+| `ρ(w0, wa)` | −0.90 | DESI 2024 VI |
+
+These are encoded immutably in `src/lib/physics/data.ts`.
+
+## 5. Likelihood and fit (re-implementation)
+
+We use the correlated 2D Gaussian χ² in the `(w0, wa)` plane:
+
+```
+χ²(ν) = 1/(1−ρ²) · [ p_w0² − 2 ρ p_w0 p_wa + p_wa² ],
+        p_w0 = (w0(ν) − w0_obs)/σ_w0,   p_wa = (wa(ν) − wa_obs)/σ_wa.
+```
+
+Because `w0(ν)` and `wa(ν)` are linear in `ν`, `χ²(ν)` is quadratic and the
+minimum is available in closed form (`analyticBestNu` in `optimizer.ts`); the UI
+solver also reaches it by gradient descent for illustration. The 1σ error on `ν`
+follows from the curvature `d²χ²/dν²` at the minimum.
+
+## 6. Results (reproduction)
+
+Running the harness (`npm run eval`) on the compressed DESI DR1 posterior yields:
+
+- **Best-fit `ν* ≈ 0.50`** on this compressed `(w0, wa)` fit — small, **positive**,
+  and consistent in sign with the published RVM preference for `ν > 0`. (The
+  precise value is sensitive to which compressed posterior is used; a full
+  likelihood would tighten and shift it. We report the compressed-fit value
+  transparently rather than tuning it to a target.)
+- **`w0 ≈ −0.77, wa ≈ −0.69`** at `ν*`, with **χ²_min ≈ 3.4**, i.e. within ~2σ of
+  the DESI central point along the RVM line.
+- **ΛCDM limit** at `ν = 0` is reproduced exactly.
+
+The `H⁴` extension ("CVC-2.0") is included as an optional second coefficient
+`ν2` that moves the prediction off the `wa = 3(1+w0)` line; it is presented as a
+*what-if* knob, not a fitted result.
+
+## 7. Numerical cross-checks (the eval harness)
+
+`eval/eval.mjs` independently re-implements the relations above (it does not
+import the app code) and asserts:
+
+1. analytic `E(z)` vs an independent numerical Friedmann integration agree to
+   **< 0.1%** over `0 < z < 4.2`;
+2. the analytic χ² minimum matches a brute-force scan and lands in a
+   sign/order-of-magnitude band anchored to the literature, recovering
+   `w0, wa` near the DESI central values within stated tolerances;
+3. the `ν = 0` ΛCDM limit is exact.
+
+These run in CI on every PR.
+
+## 8. Limitations
+
+- Compressed summary statistics, not full likelihoods; no marginalisation over
+  `Ω_m`, `H0`, nuisance parameters.
+- The `(w0, wa)` linearisation is first-order in `ν`; large-`ν` behaviour uses
+  the exact `E(z)` but the CPL mapping is approximate.
+- No Boltzmann/CMB computation; the Hubble-tension treatment is schematic.
+- Best-fit `ν` is illustrative of the method, not a publication-grade constraint.
+
+## 9. References
+
+1. Einstein, A. (1917). *Kosmologische Betrachtungen zur allgemeinen
+   Relativitätstheorie.* Sitzungsber. Preuss. Akad. Wiss.
+2. Friedmann, A. (1922). *Über die Krümmung des Raumes.* Z. Phys.
+3. Hubble, E. (1929). PNAS 15, 168. doi:10.1073/pnas.15.3.168
+4. Riess, A. G. et al. (1998). AJ 116, 1009. arXiv:astro-ph/9805201
+5. Perlmutter, S. et al. (1999). ApJ 517, 565. arXiv:astro-ph/9812133
+6. Weinberg, S. (1989). Rev. Mod. Phys. 61, 1.
+7. Carroll, S. M. (2001). Living Rev. Rel. 4, 1. arXiv:astro-ph/0004075
+8. Spergel, D. N. et al. (2003). ApJS 148, 175. arXiv:astro-ph/0302209
+9. **Basilakos, S., Polarski, D., Solà, J. (2013).** *Generalizing the running
+   vacuum energy model and comparing with the entropic-force models.*
+   Phys. Rev. D 86, 043010. arXiv:1206.4711
+10. Planck Collaboration (2020). A&A 641, A6. arXiv:1807.06209
+11. Riess, A. G. et al. / SH0ES (2022). ApJL 934, L7. arXiv:2112.04510
+12. **Solà Peracaula, J., de Cruz Pérez, J. (2022, 2024).** *Running Vacuum in
+    the Universe* (Universe; arXiv updates).
+13. **Solà Peracaula, J. (2026, forthcoming review).** Running-vacuum
+    phenomenology in light of DESI-era data.
+14. DESI Collaboration (2024). *DESI 2024 VI: Cosmological Constraints from BAO.*
+    arXiv:2404.03002
+15. Cohen, A. G., Kaplan, D. B., Nelson, A. E. (1999). PRL 82, 4971.
+    arXiv:hep-th/9810169
+16. Gibbons, G. W., Hawking, S. W. (1977). Phys. Rev. D 15, 2738.
+
+---
+
+*Prose and figures: CC BY 4.0. Code: Apache-2.0. See repository LICENSE files.*

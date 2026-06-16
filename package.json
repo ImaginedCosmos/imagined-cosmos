@@ -1,0 +1,30 @@
+{
+  "name": "imagined-cosmos",
+  "version": "0.1.0",
+  "license": "Apache-2.0",
+  "description": "Dependency-free TypeScript reference implementation of the Running Vacuum Model of dark energy, fit to public DESI/Planck/SH0ES data. A reproduction, not a discovery.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "eval": "node eval/eval.mjs"
+  },
+  "dependencies": {
+    "@tailwindcss/postcss": "^4",
+    "katex": "^0.16.39",
+    "next": "16.2.0",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "react-katex": "^3.1.0",
+    "tailwindcss": "^4"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.0",
+    "typescript": "^5"
+  }
+}
