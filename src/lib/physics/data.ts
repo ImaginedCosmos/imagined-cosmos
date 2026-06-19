@@ -21,8 +21,12 @@ export const DESI_2024 = {
   w0: -0.727,
   w0_err: 0.067,
   wa: -1.05,
+  // Published wa is asymmetric: -1.05 (+0.31/-0.27); symmetrized to the lower
+  // (tighter) side here for the Gaussian likelihood.
   wa_err: 0.27,
-  rho: -0.90,        // correlation coefficient (anti-correlated)
+  // Anti-correlation sign is DESI's; magnitude is estimated from the published
+  // (w0, wa) contour, not a separately tabulated DESI value.
+  rho: -0.90,
   sigma_from_lcdm: 3.9,
   source: "DESI Collaboration 2024 (arXiv:2404.03002)",
 } as const;

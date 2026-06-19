@@ -278,7 +278,7 @@ export default function SolvePage() {
             </p>
             <p className="text-muted/50 text-xs font-mono">
               Loop version: CVC-1.0 · Data vintage: DESI DR1 (2024) ·
-              Next data: DESI DR2 (~2026)
+              DESI DR2 released 2025-03-19 — not yet incorporated
             </p>
           </div>
         </section>
@@ -289,19 +289,20 @@ export default function SolvePage() {
             <div className="flex items-start justify-between gap-4 mb-6 flex-wrap">
               <div>
                 <p className="text-xs font-mono tracking-widest uppercase text-emerald-400 mb-2">
-                  Prediction Lock — Filed {new Date("2026-04-21").toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
+                  DR1-vintage prediction — recorded {new Date("2026-04-21").toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
                 </p>
                 <h2 className="text-xl font-bold">DESI DR2 Falsification Test</h2>
               </div>
               <span className="text-xs font-mono px-3 py-1 rounded-full border border-emerald-700/40 text-emerald-400 flex-shrink-0">
-                Awaiting data
+                DR2 not yet incorporated
               </span>
             </div>
 
             <p className="text-sm text-muted leading-relaxed mb-6">
-              The following prediction was recorded before DESI DR2 data is available.
-              It cannot be adjusted retroactively. DESI DR2 (expected 2025–2026) will
-              determine whether the CVC constraint is satisfied or violated.
+              This prediction is derived from DESI DR1 only. DESI DR2 was released on
+              2025-03-19 (arXiv:2503.14738) but is <strong>not yet incorporated</strong>
+              here; re-evaluating this DR1-vintage prediction against DR2 is outstanding
+              work, and DR2 has shifted the (w₀, wₐ) central values.
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
@@ -366,8 +367,8 @@ export default function SolvePage() {
             </div>
 
             <p className="text-xs font-mono text-muted/40 mt-5">
-              Data vintage: DESI DR1 (arXiv:2404.03002) · Prediction locked: 2026-04-21 ·
-              Expected resolution: DESI DR2 (~2026)
+              Data vintage: DESI DR1 (arXiv:2404.03002) · Recorded: 2026-04-21 ·
+              DESI DR2 released 2025-03-19 (arXiv:2503.14738), not yet incorporated
             </p>
           </div>
         </section>

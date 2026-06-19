@@ -24,8 +24,12 @@ Polarski, de Cruz Pérez, and collaborators. We reproduce three things:
    Chevallier–Polarski–Linder (CPL) equation-of-state parameters `(w0, wa)`;
 2. a transparent χ² fit of the single running coefficient `ν` to the published
    DESI DR1 + CMB + SN compressed `(w0, wa)` posterior; and
-3. the recovery of a small, positive `ν` and a dynamical-dark-energy fit
-   consistent in sign and order of magnitude with the literature.
+3. the recovery of a **positive** `ν` — the sign the RVM literature supports —
+   and a dynamical-dark-energy fit. **NB:** the fitted `ν ≈ 0.5` is *not* "small"
+   and is *not* consistent in order of magnitude with the literature's canonical
+   running coefficient (`O(10⁻³)`); it is an artifact of this compressed
+   `(w0, wa)` parametrisation, ~10²–10³× larger. Only the *sign* (`ν > 0`)
+   reproduces the literature. See §6 and §8.
 
 Within the repository and UI the implementation is packaged under the label
 "CVC." **CVC is not a distinct or competing theory.** It is shorthand for this
@@ -125,8 +129,13 @@ follows from the curvature `d²χ²/dν²` at the minimum.
 
 Running the harness (`npm run eval`) on the compressed DESI DR1 posterior yields:
 
-- **Best-fit `ν* ≈ 0.50`** on this compressed `(w0, wa)` fit — small, **positive**,
-  and consistent in sign with the published RVM preference for `ν > 0`. (The
+- **Best-fit `ν* ≈ 0.50`** on this compressed `(w0, wa)` fit — **positive**, and
+  consistent in *sign* with the published RVM preference for `ν > 0`. Its
+  *magnitude* is **not** "small": at ~10²–10³× the literature's canonical
+  `ν = O(10⁻³)` it is a feature of this compressed parametrisation, not a
+  reproduction of the published value, and only the sign carries over. (The point
+  estimate from the central `w0` alone is `ν ≈ 0.59` — as quoted on the `/solve`
+  page; `ν* ≈ 0.50` is the χ²-minimum over the correlated `(w0, wa)` ellipse. The
   precise value is sensitive to which compressed posterior is used; a full
   likelihood would tighten and shift it. We report the compressed-fit value
   transparently rather than tuning it to a target.)
@@ -172,15 +181,17 @@ These run in CI on every PR.
 6. Weinberg, S. (1989). Rev. Mod. Phys. 61, 1.
 7. Carroll, S. M. (2001). Living Rev. Rel. 4, 1. arXiv:astro-ph/0004075
 8. Spergel, D. N. et al. (2003). ApJS 148, 175. arXiv:astro-ph/0302209
-9. **Basilakos, S., Polarski, D., Solà, J. (2013).** *Generalizing the running
+9. **Basilakos, S., Polarski, D., Solà, J. (2012).** *Generalizing the running
    vacuum energy model and comparing with the entropic-force models.*
-   Phys. Rev. D 86, 043010. arXiv:1206.4711
+   Phys. Rev. D 86, 043010. arXiv:1204.4806
 10. Planck Collaboration (2020). A&A 641, A6. arXiv:1807.06209
 11. Riess, A. G. et al. / SH0ES (2022). ApJL 934, L7. arXiv:2112.04510
-12. **Solà Peracaula, J., de Cruz Pérez, J. (2022, 2024).** *Running Vacuum in
-    the Universe* (Universe; arXiv updates).
-13. **Solà Peracaula, J. (2026, forthcoming review).** Running-vacuum
-    phenomenology in light of DESI-era data.
+12. **Solà Peracaula, J., Gómez-Valent, A., de Cruz Pérez, J., Moreno-Pulido, C.
+    (2023).** *Running Vacuum in the Universe: Phenomenological Status in Light of
+    the Latest Observations, and Its Impact on the σ₈ and H₀ Tensions.* Universe
+    9(6), 262. arXiv:2304.11157. doi:10.3390/universe9060262
+13. **Solà Peracaula, J. (2024).** *Composite running vacuum in the Universe:
+    implications on the cosmological tensions.* arXiv:2410.20382
 14. DESI Collaboration (2024). *DESI 2024 VI: Cosmological Constraints from BAO.*
     arXiv:2404.03002
 15. Cohen, A. G., Kaplan, D. B., Nelson, A. E. (1999). PRL 82, 4971.
