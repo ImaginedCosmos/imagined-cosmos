@@ -104,16 +104,20 @@ console.log(pred.Ez(1.0));          // E(z=1) = H(z)/H0
 
 `npm run eval` runs `eval/eval.mjs`, a zero-dependency Node script that asserts:
 
-1. **Friedmann self-consistency** — the analytic E(z) closed form agrees with an
-   independent high-resolution numerical Friedmann integration to **< 0.1%**
-   across **0 < z < 4.2** (the DESI redshift range).
-2. **Literature recovery (sign only)** — the χ² fit recovers a best-fit running
-   coefficient **ν > 0**, the sign the RVM literature supports. Its *magnitude*
-   (ν ≈ 0.5) is an artifact of this compressed (w₀, wₐ) fit — ~10²–10³× the
-   literature's canonical RG coefficient, O(10⁻³) — **not** a reproduction of the
-   published ν value (see the whitepaper, §6). At that ν the fit lands within
-   ~2σ of the DESI central point along the model's CPL line.
-3. **ΛCDM limit** — ν = 0 reproduces standard ΛCDM (w₀ = −1, wₐ = 0, E(z) the
+1. **Friedmann constraint** — the closed-form E(z) solves its own running-vacuum
+   Friedmann equation `E² = Ω_m0(1+z)³ + Ω_Λ0 + ν(E²−1)` to machine precision.
+2. **CPL sign self-consistency** — `wₐ`, obtained by numerically differentiating
+   the effective equation of state derived from E(z), is **positive** for ν > 0
+   and matches the closed form `wₐ = +3ν·α` (so a regression to `−3ν·α` fails
+   this test).
+3. **DESI confrontation (sign only reproduces)** — the χ² minimum sits at
+   **ν* ≈ 0.02** (collapsing toward ΛCDM) with **χ²_min ≈ 16.6 (~4σ from the DESI
+   compressed (w₀, wₐ) point)**: the H²-line is **disfavoured** by DESI, not a
+   fit. DESI prefers wₐ < 0, while the model gives wₐ > 0 for ν > 0; only the
+   literature-supported *sign* (ν > 0) carries over. (The earlier "ν ≈ 0.5,
+   within ~2σ" result was an artifact of a now-corrected CPL sign error; see the
+   whitepaper §6.)
+4. **ΛCDM limit** — ν = 0 reproduces standard ΛCDM (w₀ = −1, wₐ = 0, E(z) the
    flat-ΛCDM form) exactly.
 
 The harness is wired into CI (`.github/workflows/ci.yml`) and gates every PR.

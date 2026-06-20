@@ -521,11 +521,11 @@ export default function SolutionPage() {
 
         {/* Current Result */}
         <section className="mb-16">
-          <div className="rounded-2xl border border-emerald-700/40 bg-emerald-950/10 p-8">
-            <p className="text-xs font-mono tracking-widest uppercase text-emerald-400 mb-2">
+          <div className="rounded-2xl border border-amber-700/40 bg-amber-950/10 p-8">
+            <p className="text-xs font-mono tracking-widest uppercase text-amber-400 mb-2">
               Result — DESI DR1 (2024)
             </p>
-            <h2 className="text-2xl font-bold mb-6">CVC-1.0 Converges</h2>
+            <h2 className="text-2xl font-bold mb-6">CVC-1.0 vs DESI DR1 — Disfavoured</h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
               <div className="rounded-xl border border-red-700/30 bg-red-950/10 p-5 text-center">
@@ -533,19 +533,19 @@ export default function SolutionPage() {
                 <p className="text-3xl font-bold font-mono text-foreground">{lcdmChi2.toFixed(1)}</p>
                 <p className="text-xs text-muted mt-1">χ²  —  {Math.sqrt(lcdmChi2).toFixed(1)}σ from DESI</p>
               </div>
-              <div className="rounded-xl border border-emerald-700/40 bg-emerald-950/20 p-5 text-center">
-                <p className="text-xs font-mono text-emerald-400/70 uppercase tracking-wider mb-2">
+              <div className="rounded-xl border border-amber-700/40 bg-amber-950/20 p-5 text-center">
+                <p className="text-xs font-mono text-amber-400/70 uppercase tracking-wider mb-2">
                   CVC-1.0  (ν = {best.nu.toFixed(3)})
                 </p>
-                <p className="text-3xl font-bold font-mono text-emerald-300">{best.chi2_desi.toFixed(2)}</p>
+                <p className="text-3xl font-bold font-mono text-amber-300">{best.chi2_desi.toFixed(2)}</p>
                 <p className="text-xs text-muted mt-1">χ²  —  {best.sigma_desi.toFixed(2)}σ from DESI</p>
               </div>
               <div className="rounded-xl border border-surface-light bg-surface p-5 text-center">
-                <p className="text-xs font-mono text-accent/70 uppercase tracking-wider mb-2">Improvement</p>
+                <p className="text-xs font-mono text-accent/70 uppercase tracking-wider mb-2">vs ΛCDM</p>
                 <p className="text-3xl font-bold font-mono text-violet-300">
                   Δχ² = {(lcdmChi2 - best.chi2_desi).toFixed(1)}
                 </p>
-                <p className="text-xs text-muted mt-1">ΔAIC = {(lcdmChi2 - best.chi2_desi - 2).toFixed(1)} favours CVC</p>
+                <p className="text-xs text-muted mt-1">ΔAIC = {(lcdmChi2 - best.chi2_desi - 2).toFixed(1)} (negative ⇒ ΛCDM preferred)</p>
               </div>
             </div>
 

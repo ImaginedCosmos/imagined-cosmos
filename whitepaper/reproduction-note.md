@@ -71,7 +71,7 @@ the cosmic expansion scale:
 
 where `ν` is a small dimensionless coefficient (`ν = 0` ⇒ ΛCDM) and `ν2`
 governs an optional higher-order `H⁴` term relevant only in the early universe.
-This is the form studied in Basilakos, Polarski & Solà (2013) and in the
+This is the form studied in Basilakos, Polarski & Solà (2012) and in the
 Solà Peracaula & de Cruz Pérez (2022, 2024) phenomenology papers.
 
 ### 3.2 Modified Friedmann equation (H²-only case)
@@ -94,7 +94,7 @@ the exact correspondence to a specific *named* RVM variant in the literature is
 left to the cited references (this nomenclature is flagged for expert review).
 This conserved-matter form is distinct from the **matter-exchange** variant, in
 which matter dilutes anomalously as `(1+z)^{3(1−ν)}` (Basilakos–Polarski–Solà
-2012, arXiv:1204.4806; Gómez-Valent–Solà–Basilakos 2015, arXiv:1501.03749). The
+2012, arXiv:1204.4806; Basilakos 2015, arXiv:1501.03749). The
 relation is implemented in `src/lib/physics/theory.ts`; `eval/eval.mjs` verifies
 the closed form solves its own Friedmann constraint and checks the CPL sign.
 
@@ -219,7 +219,7 @@ These run in CI on every PR.
 14. DESI Collaboration (2024). *DESI 2024 VI: Cosmological Constraints from BAO.*
     arXiv:2404.03002
 15. Cohen, A. G., Kaplan, D. B., Nelson, A. E. (1999). PRL 82, 4971.
-    arXiv:hep-th/9810169
+    arXiv:hep-th/9803132
 16. Gibbons, G. W., Hawking, S. W. (1977). Phys. Rev. D 15, 2738.
 
 ---

@@ -217,7 +217,7 @@ const SECTIONS: { heading: string; description: string; papers: Paper[] }[] = [
         authors: "Cohen, A. G., Kaplan, D. B., Nelson, A. E.",
         year: 1999,
         venue: "Physical Review Letters",
-        arxiv: "hep-th/9810169",
+        arxiv: "hep-th/9803132",
         doi: "10.1103/PhysRevLett.82.4971",
         annotation:
           "The CKN bound: any QFT in a volume L³ must have zero-point energy below M_P²/L² — otherwise the system collapses into a black hole. Setting the IR cutoff at the Hubble horizon L = H⁻¹ immediately gives ρ_vac ≤ M_P²H². The 10¹²¹ discrepancy is not a fine-tuning crisis; it is the result of using the wrong UV cutoff.",
@@ -252,7 +252,7 @@ const SECTIONS: { heading: string; description: string; papers: Paper[] }[] = [
         venue: "arXiv preprint",
         arxiv: "2410.20382",
         annotation:
-          "Extends the Running Vacuum Model to a composite dark-energy scenario (running vacuum + phantom matter) aimed at relaxing the H₀ and σ₈ tensions, and notes the quintessence-like behaviour near the present epoch reported by DESI. Context for the CVC-1.0 solver's dynamical-DE fit. Note: the canonical RVM running coefficient is |ν_SM| ~ 10⁻³ — far below this project's compressed-fit ν ≈ 0.5.",
+          "Extends the Running Vacuum Model to a composite dark-energy scenario (running vacuum + phantom matter) aimed at relaxing the H₀ and σ₈ tensions, and notes the quintessence-like behaviour near the present epoch reported by DESI. Context for the CVC-1.0 solver's dynamical-DE fit. Note: the canonical RVM running coefficient is |ν_SM| ~ 10⁻³ — far below even this project's compressed (w₀, wₐ) best-fit (ν* ≈ 0.02), and the H²-line is in any case disfavoured by DESI (see the solver).",
       },
     ],
   },
