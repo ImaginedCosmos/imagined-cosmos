@@ -49,7 +49,8 @@ The Running Vacuum Model treats the vacuum energy density as a function of the
 Hubble rate, ρ_Λ(H) = ρ_Λ₀ + (3ν/8π) M_P² (H² − H₀²) (plus an optional H⁴
 term). A single dimensionless coefficient **ν** controls the running; ν = 0
 recovers ΛCDM. Linearising near today maps ν onto the Chevallier–Polarski–Linder
-(CPL) parameters via w₀ = −1 + ν·α and wₐ = −3ν·α, with α = Ω_m0/Ω_Λ0. The
+(CPL) parameters via w₀ = −1 + ν·α and wₐ = +3ν·α, with α = Ω_m0/Ω_Λ0 (so wₐ > 0
+for ν > 0). The
 modified Friedmann equation has the closed analytic form
 E²(z) = [Ω_m0(1+z)³ + Ω_Λ0 − ν] / (1 − ν) in the H²-only case, which this
 project reproduces and cross-checks numerically.

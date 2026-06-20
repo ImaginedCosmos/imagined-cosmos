@@ -7,7 +7,7 @@ import { useEffect, useRef } from "react";
 
 const OMEGA_M0 = 0.315;
 const OMEGA_L0 = 0.685;
-const NU = 0.59; // best-fit from solver
+const NU = 0.1; // illustrative running; the DESI DR1 best fit collapses to ν≈0.02 (≈ΛCDM)
 
 // E²(a) in CVC-1.0 = [Ω_m a^-3 + Ω_Λ - ν] / (1-ν)
 function E2(a: number): number {

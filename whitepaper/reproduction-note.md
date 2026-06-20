@@ -24,12 +24,13 @@ Polarski, de Cruz Pérez, and collaborators. We reproduce three things:
    Chevallier–Polarski–Linder (CPL) equation-of-state parameters `(w0, wa)`;
 2. a transparent χ² fit of the single running coefficient `ν` to the published
    DESI DR1 + CMB + SN compressed `(w0, wa)` posterior; and
-3. the recovery of a **positive** `ν` — the sign the RVM literature supports —
-   and a dynamical-dark-energy fit. **NB:** the fitted `ν ≈ 0.5` is *not* "small"
-   and is *not* consistent in order of magnitude with the literature's canonical
-   running coefficient (`O(10⁻³)`); it is an artifact of this compressed
-   `(w0, wa)` parametrisation, ~10²–10³× larger. Only the *sign* (`ν > 0`)
-   reproduces the literature. See §6 and §8.
+3. the result that — with the **corrected** CPL slope (`wa = +3να`, see §3.3) —
+   the H²-line model is **disfavoured** by the DESI DR1 `(w0, wa)` posterior: the
+   best fit collapses toward ΛCDM (`ν* ≈ 0.02`) with `χ²_min ≈ 16.6` (~4σ from the
+   DESI central point). Only the *sign* (`ν > 0`) is the literature-supported
+   feature — the data prefer `wa < 0` while the model gives `wa > 0`. (An earlier
+   version reported a spurious `ν ≈ 0.5` "fit within ~2σ", an artifact of a sign
+   error now corrected. See §3.3, §6 and §8.)
 
 Within the repository and UI the implementation is packaged under the label
 "CVC." **CVC is not a distinct or competing theory.** It is shorthand for this
@@ -75,16 +76,24 @@ Solà Peracaula & de Cruz Pérez (2022, 2024) phenomenology papers.
 
 ### 3.2 Modified Friedmann equation (H²-only case)
 
-Imposing covariant conservation on the matter + running-vacuum system and
-substituting the running term yields, for the `H²`-only model, the closed form
+This project reproduces the **Type-G** running-vacuum branch: **matter is
+covariantly conserved on its own** (`ρ_m ∝ (1+z)³`) and the vacuum running is
+balanced by a running gravitational coupling `G(H)`. Substituting
+`ρ_Λ(H)/ρ_c0 = Ω_Λ0 + ν(E²−1)` into the Friedmann constraint
+`E² = Ω_m0(1+z)³ + ρ_Λ/ρ_c0` yields, for the `H²`-only model, the closed form
 
 ```
 E²(z) = H²(z)/H0² = [ Ω_m0 (1+z)³ + Ω_Λ0 − ν ] / (1 − ν).
 ```
 
-`ν = 0` recovers the flat-ΛCDM expression `E²(z) = Ω_m0(1+z)³ + Ω_Λ0`. This is
-the relation implemented analytically in `src/lib/physics/theory.ts` and
-cross-checked numerically in `eval/eval.mjs`.
+`ν = 0` recovers flat-ΛCDM. The **matter exponent is exactly 3** here — this is
+the Type-G branch, distinct from the **Type-A** branch (constant `G`,
+matter–vacuum energy exchange), where matter dilutes anomalously as
+`(1+z)^{3(1−ν)}` (Basilakos–Polarski–Solà 2012, arXiv:1204.4806;
+Gómez-Valent–Solà–Basilakos 2015, arXiv:1501.03749). We use the matter-conserved
+Type-G branch, consistent with arXiv:2207.07111 and arXiv:2410.20382. The
+relation is implemented in `src/lib/physics/theory.ts`; `eval/eval.mjs` verifies
+the closed form solves its own Friedmann constraint and checks the CPL sign.
 
 ### 3.3 Linearised CPL mapping
 
@@ -92,12 +101,17 @@ Expanding the effective dark-energy equation of state near `z = 0` gives, to
 first order in `ν`, the compact mapping used throughout:
 
 ```
-w0 = −1 + ν α,    wa = −3 ν α,    α ≡ Ω_m0 / Ω_Λ0 ≈ 0.4599 (Planck 2018).
+w0 = −1 + ν α,    wa = +3 ν α,    α ≡ Ω_m0 / Ω_Λ0 ≈ 0.4599 (Planck 2018).
 ```
 
-Eliminating `ν` gives the RVM consistency relation `wa = 3(1 + w0)`, i.e. the
-model lives on a line in the `(w0, wa)` plane — a strong, falsifiable prediction.
-The `H⁴` extension shifts the model off this line in a controlled way; see §6.
+For `ν > 0` (quintessence, `w0 > −1`) the slope `wa` is **positive**: the
+effective DE density `ρ_DE = E² − Ω_m0(1+z)³` carries a `+ν Ω_m0(1+z)³` term, so
+`w_eff` rises toward the past. Eliminating `ν` gives the consistency relation
+`wa = +3(1 + w0)` — the model lives on a line in the `(w0, wa)` plane, a strong,
+falsifiable prediction. (An earlier version of this note and the code carried
+`wa = −3να`; that sign error — corrected here, with an independent sign check
+added to `eval/eval.mjs` — spuriously placed the model in DESI's preferred
+`wa < 0` quadrant. See §6.) The `H⁴` extension shifts the model off this line; see §6.
 
 ## 4. Data (public summary statistics)
 
@@ -129,35 +143,41 @@ follows from the curvature `d²χ²/dν²` at the minimum.
 
 Running the harness (`npm run eval`) on the compressed DESI DR1 posterior yields:
 
-- **Best-fit `ν* ≈ 0.50`** on this compressed `(w0, wa)` fit — **positive**, and
-  consistent in *sign* with the published RVM preference for `ν > 0`. Its
-  *magnitude* is **not** "small": at ~10²–10³× the literature's canonical
-  `ν = O(10⁻³)` it is a feature of this compressed parametrisation, not a
-  reproduction of the published value, and only the sign carries over. (The point
-  estimate from the central `w0` alone is `ν ≈ 0.59` — as quoted on the `/solve`
-  page; `ν* ≈ 0.50` is the χ²-minimum over the correlated `(w0, wa)` ellipse. The
-  precise value is sensitive to which compressed posterior is used; a full
-  likelihood would tighten and shift it. We report the compressed-fit value
-  transparently rather than tuning it to a target.)
-- **`w0 ≈ −0.77, wa ≈ −0.69`** at `ν*`, with **χ²_min ≈ 3.4**, i.e. within ~2σ of
-  the DESI central point along the RVM line.
+- **The H²-line model is *disfavoured* by DESI.** With the correct slope
+  `wa = +3να`, positive `ν` (quintessence, `w0 > −1`) forces `wa > 0`, but DESI
+  DR1 prefers `wa = −1.05 < 0`. The correlated χ² drives the best fit toward
+  `ν* ≈ 0.02` (essentially ΛCDM), at `w0 ≈ −0.99, wa ≈ +0.03`, with
+  **χ²_min ≈ 16.6 (~4σ from the DESI central point)**.
+- **The canonical H²-line RVM does not sit near DESI's `(w0, wa)`.** This agrees
+  with the RVM authors' own DESI-era analysis: the H²-line model is the *weakest*
+  variant, and an off-line ("flipped"/threshold) extension is needed to approach
+  the data (Solà Peracaula et al., arXiv:2512.20616).
 - **ΛCDM limit** at `ν = 0` is reproduced exactly.
 
-The `H⁴` extension ("CVC-2.0") is included as an optional second coefficient
-`ν2` that moves the prediction off the `wa = 3(1+w0)` line; it is presented as a
-*what-if* knob, not a fitted result.
+> **Correction note.** An earlier version reported `ν* ≈ 0.50`, `χ²_min ≈ 3.4`,
+> "within ~2σ of DESI." That apparent agreement was an artifact of a **sign error**
+> in the CPL slope (`wa = −3να` instead of `+3να`), which flipped the model into
+> DESI's preferred `wa < 0` quadrant. `eval/eval.mjs` now derives the slope's sign
+> independently from `E(z)` and asserts `wa > 0`, so the regression cannot recur.
+
+The `H⁴` extension ("CVC-2.0") is the optional second coefficient `ν2` that moves
+the prediction *off* the `wa = +3(1+w0)` line; it is the route by which the
+running-vacuum family can approach DESI's off-line point, presented here as a
+*what-if* knob rather than a fitted result.
 
 ## 7. Numerical cross-checks (the eval harness)
 
-`eval/eval.mjs` independently re-implements the relations above (it does not
-import the app code) and asserts:
+`eval/eval.mjs` re-implements the relations above independently of the app code
+(`src/lib/physics`) and asserts:
 
-1. analytic `E(z)` vs an independent numerical Friedmann integration agree to
-   **< 0.1%** over `0 < z < 4.2`;
-2. the analytic χ² minimum matches a brute-force scan and lands in a
-   sign/order-of-magnitude band anchored to the literature, recovering
-   `w0, wa` near the DESI central values within stated tolerances;
-3. the `ν = 0` ΛCDM limit is exact.
+1. the closed-form `E²(z)` solves its own running-vacuum Friedmann constraint
+   `E² = Ω_m0(1+z)³ + Ω_Λ0 + ν(E²−1)` to machine precision;
+2. **CPL sign self-consistency** — `wa` obtained by numerically differentiating
+   the effective EoS `w_eff(z)` derived from `E(z)` is **positive** for `ν > 0`
+   and matches the closed-form `wa = +3να` (so a regression to `−3να` fails);
+3. **DESI confrontation** — the χ² minimum is `χ²_min ≈ 16.6` (~4σ) at
+   `ν* ≈ 0.02`, i.e. the H²-line is disfavoured, not a fit;
+4. the `ν = 0` ΛCDM limit is exact.
 
 These run in CI on every PR.
 

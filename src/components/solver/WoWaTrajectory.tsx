@@ -114,15 +114,15 @@ export default function WoWaTrajectory({ cvc1Steps, currentIndex, cvc2Steps, rev
     ctx.lineWidth = 1.5;
     ctx.stroke();
 
-    // CVC-1.0 constraint ray: wₐ = -3(1+w₀)
+    // CVC-1.0 constraint ray: wₐ = +3(1+w₀)
     ctx.save();
     ctx.beginPath(); ctx.rect(pL, pT, plotW, plotH); ctx.clip();
     ctx.setLineDash([5, 3]);
     ctx.strokeStyle = "rgba(52,211,153,0.35)";
     ctx.lineWidth = 1.5;
     ctx.beginPath();
-    ctx.moveTo(toX(-1.55), toY(-3 * (1 + -1.55)));
-    ctx.lineTo(toX(-0.25), toY(-3 * (1 + -0.25)));
+    ctx.moveTo(toX(-1.55), toY(+3 * (1 + -1.55)));
+    ctx.lineTo(toX(-0.25), toY(+3 * (1 + -0.25)));
     ctx.stroke();
     ctx.setLineDash([]);
     ctx.restore();
@@ -235,7 +235,7 @@ export default function WoWaTrajectory({ cvc1Steps, currentIndex, cvc2Steps, rev
     const legends: [string, string][] = [
       ["rgba(167,139,250,0.8)", "CVC-1.0 trajectory"],
       ...(cvc2Steps && revisionIndex > 0 ? [["rgba(251,191,36,0.8)", "CVC-2.0 trajectory"] as [string, string]] : []),
-      ["rgba(52,211,153,0.35)", "CVC ray  wₐ=−3(1+w₀)"],
+      ["rgba(52,211,153,0.35)", "CVC ray  wₐ=+3(1+w₀)"],
     ];
     legends.forEach(([color, label], i) => {
       ctx.fillStyle = color;
