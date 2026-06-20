@@ -271,7 +271,7 @@ export default function DensityTracking() {
       <div className="px-5 py-3 border-t border-surface-light bg-surface/40">
         <p className="text-xs font-mono text-muted/55 leading-relaxed">
           During matter domination, H² ∝ ρ_m — so the CVC running vacuum (green) tracks matter density (yellow).
-          The "coincidence" ρ_Λ ≈ ρ_m today is not an accident: it marks the end of the tracking epoch,
+          The &ldquo;coincidence&rdquo; ρ_Λ ≈ ρ_m today is not an accident: it marks the end of the tracking epoch,
           where H begins to stabilise toward H₀ and ρ_Λ(H) approaches ρ_Λ₀.
           ΛCDM (red dashed) has no tracking mechanism — the coincidence is pure accident.
         </p>
