@@ -151,10 +151,11 @@ Running the harness (`npm run eval`) on the compressed DESI DR1 posterior yields
   DR1 prefers `wa = −1.05 < 0`. The correlated χ² drives the best fit toward
   `ν* ≈ 0.02` (essentially ΛCDM), at `w0 ≈ −0.99, wa ≈ +0.03`, with
   **χ²_min ≈ 16.6 (~4σ from the DESI central point)**.
-- **The canonical H²-line RVM does not sit near DESI's `(w0, wa)`.** This agrees
-  with the RVM authors' own DESI-era analysis: the H²-line model is the *weakest*
-  variant, and an off-line ("flipped"/threshold) extension is needed to approach
-  the data (Solà Peracaula et al., arXiv:2512.20616).
+- **The canonical H²-line RVM does not sit near DESI's `(w0, wa)`.** This is
+  consistent with recent running-vacuum work in the DESI era, which examines
+  threshold and off-line RVM variants (beyond the simple H²-line) against
+  DESI-DR2-era data (de Cruz Pérez, Gómez-Valent & Solà Peracaula 2025,
+  arXiv:2512.20616).
 - **ΛCDM limit** at `ν = 0` is reproduced exactly.
 
 > **Correction note.** An earlier version reported `ν* ≈ 0.50`, `χ²_min ≈ 3.4`,
