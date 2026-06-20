@@ -174,6 +174,44 @@ console.log("Imagined Cosmos — reproduction eval harness\n");
     `max rel.err = ${maxRel.toExponential(2)}`);
 }
 
+// --- Test 5: CVC-2.0 (H^4) nu2 CPL coefficients — wa is 6*(1+Om)*alpha, NOT 8*alpha ---
+{
+  const Om = PLANCK.omega_m, OL = PLANCK.omega_lambda;
+  // exact H^4 Friedmann fixed-point (independent of theory.ts):
+  //   E^2 = Om(1+z)^3 + OL + nu(E^2-1) + nu2(E^4-1)
+  const E2v = (z, nu, nu2) => {
+    let E = Om * Math.pow(1 + z, 3) + OL;
+    for (let i = 0; i < 300; i++) {
+      const n = Om * Math.pow(1 + z, 3) + OL + nu * (E - 1) + nu2 * (E * E - 1);
+      if (Math.abs(n - E) < 1e-15) { E = n; break; } E = n;
+    }
+    return E;
+  };
+  const rhoDEv = (z, nu, nu2) => E2v(z, nu, nu2) - Om * Math.pow(1 + z, 3);
+  const hz = 1e-5;
+  const w0Of = (nu, nu2) =>
+    -1 + ((rhoDEv(hz, nu, nu2) - rhoDEv(-hz, nu, nu2)) / (2 * hz)) / (3 * rhoDEv(0, nu, nu2));
+  const waOf = (nu, nu2) => {
+    const we = (z) => -1 + ((1 + z) / (3 * rhoDEv(z, nu, nu2))) *
+      ((rhoDEv(z + hz, nu, nu2) - rhoDEv(z - hz, nu, nu2)) / (2 * hz));
+    return (we(hz) - we(-hz)) / (2 * hz);
+  };
+  const eps = 1e-4;
+  const dwa_dnu2 = (waOf(0, eps) / eps) / ALPHA;     // linear coeff, in units of alpha
+  const dw0_dnu2 = ((w0Of(0, eps) + 1) / eps) / ALPHA;
+  const expected = 6 * (1 + Om);                     // = 6*Om*(OL+2*Om)/OL = 7.890 at Om=0.315
+  check(
+    "CVC-2.0 H^4 wa-coefficient is 6*(1+Om)*alpha (~7.89a), NOT 8a",
+    Math.abs(dwa_dnu2 - expected) < 0.05 && Math.abs(dwa_dnu2 - 8) > 0.05,
+    `dwa/dnu2 = ${dwa_dnu2.toFixed(3)}a vs expected ${expected.toFixed(3)}a (8a rejected)`
+  );
+  check(
+    "CVC-2.0 H^4 w0-coefficient is exactly 2*alpha",
+    Math.abs(dw0_dnu2 - 2) < 0.02,
+    `dw0/dnu2 = ${dw0_dnu2.toFixed(3)}a (expect 2a)`
+  );
+}
+
 console.log("");
 if (failures > 0) {
   console.error(`${failures} check(s) FAILED`);
