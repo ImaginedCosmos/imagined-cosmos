@@ -282,7 +282,7 @@ export default function SolverLoop() {
                       { label: "ν₁ (fixed)", value: step2.nu1.toFixed(4), sub: "CVC-1.0 best" },
                       { label: "ν₂ (H⁴)", value: step2.nu2.toFixed(4), sub: "correction term" },
                       { label: "χ² (DESI)", value: step2.chi2_desi.toFixed(3), sub: `${step2.sigma_desi.toFixed(2)}σ from DESI` },
-                      { label: "wₐ−CVC line", value: step2.wa !== undefined ? (step2.wa + 3 * (1 + step2.w0)).toFixed(4) : "—", sub: "off-line offset" },
+                      { label: "wₐ−CVC line", value: step2.wa !== undefined ? (step2.wa - 3 * (1 + step2.w0)).toFixed(4) : "—", sub: "off-line offset" },
                     ].map((s) => (
                       <div key={s.label} className="rounded-xl border border-surface-light bg-surface px-4 py-3">
                         <p className="text-xs font-mono text-muted/60 uppercase tracking-wider mb-1">{s.label}</p>
