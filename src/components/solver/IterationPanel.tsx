@@ -104,7 +104,7 @@ export default function IterationPanel({
           <span className="text-muted/60">Δν</span>
           <span className="text-violet-300">{step.step_size.toFixed(5)}</span>
           <span className="text-muted/40 ml-auto text-xs">
-            CVC residual: {(step.wa + 3 * (1 + step.w0)).toFixed(4)}
+            CVC residual: {(step.wa - 3 * (1 + step.w0)).toFixed(4)}
           </span>
         </div>
       </div>
