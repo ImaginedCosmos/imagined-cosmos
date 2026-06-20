@@ -44,7 +44,7 @@ export function computePredictions(params: TheoryParams): TheoryPredictions {
 
   const alpha = omega_m0 / omega_lambda0; // ≈ 0.4599
 
-  // CVC-1.0 CPL parameters (Type-G RVM, matter conserved): w₀ = -1 + να, wₐ = +3να.
+  // CVC-1.0 CPL parameters (conserved-matter H²-RVM background): w₀ = -1 + να, wₐ = +3να.
   // wₐ is POSITIVE for ν>0: the effective DE density ρ_DE = E² − Ω_m(1+z)³ carries a
   // +ν·Ω_m(1+z)³ term, so w_eff rises with z (quintessence-like). Verified by
   // differentiating w_eff(z) numerically from Ez (eval/eval.mjs). [Was −3να — a sign
@@ -128,7 +128,7 @@ export function analyticBestNu(
   rho: number,
   alpha: number = FIDUCIAL.alpha
 ): number {
-  // Theory (Type-G CVC-1.0): w0 = -1 + ν α,  wa = +3ν α
+  // Theory (conserved-matter CVC-1.0): w0 = -1 + ν α,  wa = +3ν α
   // Define: a = α/σ_w0,  b = +3α/σ_wa  (∂w0/∂ν / σ and ∂wa/∂ν / σ)
   // c0 = (-1 - w0_obs)/σ_w0,  ca = (-wa_obs)/σ_wa  (residuals at ν=0)
   const a = alpha / w0_err;
