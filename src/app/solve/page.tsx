@@ -227,8 +227,8 @@ export default function SolvePage() {
               <p className="text-3xl font-bold font-mono text-foreground">{best.chi2_desi.toFixed(2)}</p>
               <p className="text-xs text-muted mt-1 mb-3">χ²  ({best.sigma_desi.toFixed(2)}σ from DESI)</p>
               <p className="text-xs font-mono text-emerald-400/60">
-                One free parameter (ν). Best-fit lies inside the DESI 2σ ellipse.
-                Theory converges.
+                One free parameter (ν). Even at best-fit ν, the H²-line model lands
+                far outside the DESI 2σ ellipse — the data disfavours it.
               </p>
             </div>
             <div className="rounded-xl border border-surface-light bg-surface p-5">
@@ -238,8 +238,9 @@ export default function SolvePage() {
               </p>
               <p className="text-xs text-muted mt-1 mb-3">CVC vs ΛCDM</p>
               <p className="text-xs font-mono text-muted/50">
-                CVC gains {(lcdmChi2 - best.chi2_desi).toFixed(1)} χ² units with
-                one additional parameter. Under AIC, Δχ²−2 = {(lcdmChi2 - best.chi2_desi - 2).toFixed(1)} favours CVC.
+                CVC moves {(lcdmChi2 - best.chi2_desi).toFixed(1)} χ² units relative to
+                ΛCDM with one extra parameter — but at χ² ≈ {best.chi2_desi.toFixed(1)} ({best.sigma_desi.toFixed(1)}σ)
+                the H²-line model is itself disfavoured by DESI, not a fit. Under AIC, Δχ²−2 = {(lcdmChi2 - best.chi2_desi - 2).toFixed(1)}.
               </p>
             </div>
           </div>
@@ -308,7 +309,7 @@ export default function SolvePage() {
               {[
                 {
                   label: "CVC falsification criterion",
-                  value: "wₐ / (1 + w₀) ≈ −3",
+                  value: "wₐ / (1 + w₀) ≈ +3",
                   note: "to within 1σ of DR2 measurement",
                   color: "emerald",
                 },
@@ -326,8 +327,8 @@ export default function SolvePage() {
                 },
                 {
                   label: "Predicted wₐ range",
-                  value: "−0.09 to −0.82",
-                  note: "wₐ = −3(1+w₀) constraint",
+                  value: "+0.09 to +0.81",
+                  note: "wₐ = +3(1+w₀) constraint",
                   color: "slate",
                 },
               ].map((item) => (
@@ -347,7 +348,7 @@ export default function SolvePage() {
                 <div className="flex gap-3">
                   <span className="text-emerald-400 flex-shrink-0">✓</span>
                   <span className="text-muted">
-                    <span className="text-foreground">Confirmed</span>: DR2 best-fit (w₀, wₐ) lies within 1σ of the CVC ray wₐ = −3(1+w₀)
+                    <span className="text-foreground">Confirmed</span>: DR2 best-fit (w₀, wₐ) lies within 1σ of the CVC ray wₐ = +3(1+w₀)
                   </span>
                 </div>
                 <div className="flex gap-3">

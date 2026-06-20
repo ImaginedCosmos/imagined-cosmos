@@ -100,12 +100,12 @@ export function optimizationTrace(
 }
 
 // 1σ uncertainty on ν from the curvature of χ²(ν) at the minimum
-// d²χ²/dν² = (2/(1-ρ²)) * (a² - 2ρab + b²)  where a=α/σ_w0, b=-3α/σ_wa
-// σ_ν = 1 / sqrt(d²χ²/dν²)
+// d²χ²/dν² = (2/(1-ρ²)) * (a² - 2ρab + b²)  where a=α/σ_w0, b=+3α/σ_wa
+// σ_ν = 1 / sqrt(d²χ²/dν²)  (sign of b is immaterial here — it enters squared)
 export function nuUncertainty(obs: ObservationalConstraints): number {
   const alpha = FIDUCIAL.alpha;
   const a = alpha / obs.w0_err;
-  const b = -3 * alpha / obs.wa_err;
+  const b = 3 * alpha / obs.wa_err;
   const rho = obs.rho;
   const d2chi2 = (2 / (1 - rho * rho)) * (a * a - 2 * rho * a * b + b * b);
   return 1 / Math.sqrt(d2chi2);
