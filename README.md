@@ -9,9 +9,9 @@ Model (RVM) of dark energy, fit to public DESI / Planck / SH0ES data.**
 > Basilakos, Polarski, Solà Peracaula, and collaborators. This repository
 > contributes **no new theory and no new measurement.** It re-derives the
 > published RVM expressions, re-implements them in self-contained TypeScript
-> with **zero numerical dependencies**, and reproduces the literature's
-> best-fit running coefficient by a transparent χ² fit against published
-> observational constraints. It exists as an educational, auditable reference —
+> with **zero numerical dependencies**, and fits the running coefficient by a
+> transparent χ² against published observational constraints. It exists as an
+> educational, auditable reference —
 > a way to *run the equations yourself* — and is framed accordingly throughout.
 >
 > In the code and UI the model is labelled **"CVC"** (a self-contained
@@ -56,15 +56,15 @@ project reproduces and cross-checks numerically.
 
 ## Primary citations (the physics this reproduces)
 
-- **Basilakos, S., Polarski, D., Solà, J. (2013)** — *"Generalizing the running
+- **Basilakos, S., Polarski, D., Solà, J. (2012)** — *"Generalizing the running
   vacuum energy model and comparing with the entropic-force models."*
-  Phys. Rev. D 86, 043010 / arXiv:1206.4711. The running-vacuum equation-of-state
+  Phys. Rev. D 86, 043010 / arXiv:1204.4806. The running-vacuum equation-of-state
   mapping and dynamical-DE phenomenology reproduced here.
-- **Solà Peracaula, J. (2026 / forthcoming review)** — *running-vacuum
-  phenomenology in light of DESI-era data*; together with
-  **Solà Peracaula, J. & de Cruz Pérez, J. (2022, 2024)** *"Running Vacuum in the
-  Universe"* (Universe; arXiv updates), which set the observational baseline and
-  the best-fit ν used as the reproduction target.
+- **Solà Peracaula, J., Gómez-Valent, A., de Cruz Pérez, J., Moreno-Pulido, C.
+  (2023)** — *"Running Vacuum in the Universe: Phenomenological Status in Light of
+  the Latest Observations, and Its Impact on the σ₈ and H₀ Tensions."* Universe
+  9(6), 262 / arXiv:2304.11157. The RVM phenomenology baseline; the literature
+  supports the *sign* (ν > 0) used as the reproduction reference.
 
 Observational inputs (all public):
 
@@ -106,9 +106,12 @@ console.log(pred.Ez(1.0));          // E(z=1) = H(z)/H0
 1. **Friedmann self-consistency** — the analytic E(z) closed form agrees with an
    independent high-resolution numerical Friedmann integration to **< 0.1%**
    across **0 < z < 4.2** (the DESI redshift range).
-2. **Literature recovery** — the χ² fit recovers a best-fit running coefficient
-   **ν** consistent with the published RVM/DESI value, within a stated tolerance,
-   and recovers w₀ ≈ −0.73, wₐ ≈ −1.05 at that ν.
+2. **Literature recovery (sign only)** — the χ² fit recovers a best-fit running
+   coefficient **ν > 0**, the sign the RVM literature supports. Its *magnitude*
+   (ν ≈ 0.5) is an artifact of this compressed (w₀, wₐ) fit — ~10²–10³× the
+   literature's canonical RG coefficient, O(10⁻³) — **not** a reproduction of the
+   published ν value (see the whitepaper, §6). At that ν the fit lands within
+   ~2σ of the DESI central point along the model's CPL line.
 3. **ΛCDM limit** — ν = 0 reproduces standard ΛCDM (w₀ = −1, wₐ = 0, E(z) the
    flat-ΛCDM form) exactly.
 

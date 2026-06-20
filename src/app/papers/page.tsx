@@ -234,21 +234,25 @@ const SECTIONS: { heading: string; description: string; papers: Paper[] }[] = [
       },
       {
         title:
-          "Running Vacuum in the Universe: Phenomenological Status in Light of the Latest Observations",
-        authors: "Solà Peracaula, J., de Cruz Pérez, J.",
-        year: 2022,
-        venue: "Universe",
+          "Running Vacuum in the Universe: Phenomenological Status in Light of the Latest Observations, and Its Impact on the σ₈ and H₀ Tensions",
+        authors:
+          "Solà Peracaula, J., Gómez-Valent, A., de Cruz Pérez, J., Moreno-Pulido, C.",
+        year: 2023,
+        venue: "Universe 9(6), 262",
+        arxiv: "2304.11157",
+        doi: "10.3390/universe9060262",
         annotation:
-          "Systematic comparison of the Running Vacuum Model — ρ_Λ(H) = ρ_Λ₀ + 3νM_P²(H² − H₀²)/8π — against Planck, BAO, and CMB data. Finds a mild but consistent preference for ν ≠ 0. Sets the observational baseline that DESI subsequently sharpened, and is the primary RVM phenomenology reference used in the CVC solver.",
+          "Systematic comparison of the Running Vacuum Model — ρ_Λ(H) = ρ_Λ₀ + 3νM_P²(H² − H₀²)/8π — against Planck, BAO, and CMB data. Finds a mild but consistent preference for ν ≠ 0 (canonical |ν| ~ 10⁻³). Sets the observational baseline that DESI subsequently sharpened, and is the primary RVM phenomenology reference used in the CVC solver.",
       },
       {
         title:
-          "Running Vacuum in the Universe and the Hubble Tension: Comparison with Observational Data",
-        authors: "Solà Peracaula, J., de Cruz Pérez, J.",
+          "Composite Running Vacuum in the Universe: Implications on the Cosmological Tensions",
+        authors: "Solà Peracaula, J.",
         year: 2024,
         venue: "arXiv preprint",
+        arxiv: "2410.20382",
         annotation:
-          "Analysis of the Running Vacuum Model in light of DESI DR1 constraints. Shows that RVM provides an improved fit to the DESI + Planck + SNIa combination, with ν strongly constrained by the BAO data. The observational grounding for the CVC-1.0 solver's predictions and the tension with the SM value |ν_SM| ~ 10⁻³.",
+          "Extends the Running Vacuum Model to a composite dark-energy scenario (running vacuum + phantom matter) aimed at relaxing the H₀ and σ₈ tensions, and notes the quintessence-like behaviour near the present epoch reported by DESI. Context for the CVC-1.0 solver's dynamical-DE fit. Note: the canonical RVM running coefficient is |ν_SM| ~ 10⁻³ — far below this project's compressed-fit ν ≈ 0.5.",
       },
     ],
   },
