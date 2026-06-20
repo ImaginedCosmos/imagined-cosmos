@@ -76,22 +76,25 @@ Solà Peracaula & de Cruz Pérez (2022, 2024) phenomenology papers.
 
 ### 3.2 Modified Friedmann equation (H²-only case)
 
-This project reproduces the **Type-G** running-vacuum branch: **matter is
-covariantly conserved on its own** (`ρ_m ∝ (1+z)³`) and the vacuum running is
-balanced by a running gravitational coupling `G(H)`. Substituting
-`ρ_Λ(H)/ρ_c0 = Ω_Λ0 + ν(E²−1)` into the Friedmann constraint
-`E² = Ω_m0(1+z)³ + ρ_Λ/ρ_c0` yields, for the `H²`-only model, the closed form
+This project reproduces the **H²-running-vacuum effective background** with
+**conserved matter** (`ρ_m ∝ (1+z)³`): substituting `ρ_Λ/ρ_c0 = Ω_Λ0 + ν(E²−1)`
+into the Friedmann constraint `E² = Ω_m0(1+z)³ + ρ_Λ/ρ_c0` gives, for the
+`H²`-only model, the closed form
 
 ```
 E²(z) = H²(z)/H0² = [ Ω_m0 (1+z)³ + Ω_Λ0 − ν ] / (1 − ν).
 ```
 
-`ν = 0` recovers flat-ΛCDM. The **matter exponent is exactly 3** here — this is
-the Type-G branch, distinct from the **Type-A** branch (constant `G`,
-matter–vacuum energy exchange), where matter dilutes anomalously as
-`(1+z)^{3(1−ν)}` (Basilakos–Polarski–Solà 2012, arXiv:1204.4806;
-Gómez-Valent–Solà–Basilakos 2015, arXiv:1501.03749). We use the matter-conserved
-Type-G branch, consistent with arXiv:2207.07111 and arXiv:2410.20382. The
+`ν = 0` recovers flat-ΛCDM. We keep the matter exponent at **3** (conserved
+matter) and treat the running term as an effective dark-energy component with the
+equation of state of §3.3. The microphysical mechanism that reconciles a running
+vacuum with conserved matter — e.g. a running gravitational coupling, or a
+matter–vacuum interaction — is a modelling choice we do not commit to here, and
+the exact correspondence to a specific *named* RVM variant in the literature is
+left to the cited references (this nomenclature is flagged for expert review).
+This conserved-matter form is distinct from the **matter-exchange** variant, in
+which matter dilutes anomalously as `(1+z)^{3(1−ν)}` (Basilakos–Polarski–Solà
+2012, arXiv:1204.4806; Gómez-Valent–Solà–Basilakos 2015, arXiv:1501.03749). The
 relation is implemented in `src/lib/physics/theory.ts`; `eval/eval.mjs` verifies
 the closed form solves its own Friedmann constraint and checks the CPL sign.
 

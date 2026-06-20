@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Reproduction eval harness — zero dependencies, runs under plain `node`.
 //
-// This re-derives the H^2-only running-vacuum relations (CVC-1.0 = Type-G RVM:
+// This re-derives the H^2-only running-vacuum relations (CVC-1.0 = conserved-matter RVM:
 // running gravitational coupling, matter conserved) INDEPENDENTLY of
 // src/lib/physics so the harness is a genuine cross-check, not a tautology.
 // Crucially, it derives the CPL slope wa by NUMERICALLY differentiating the
@@ -15,7 +15,7 @@
 //      wa = -3*nu*alpha; this test now rejects that sign.)
 //   3. DESI confrontation (honest): on its consistency line wa = +3(1+w0), the
 //      H^2-line model is DISFAVOURED by DESI DR1 — best-fit nu collapses toward
-//      LCDM and chi^2_min ~ 16 (~4 sigma). DESI prefers wa < 0, but Type-G RVM with
+//      LCDM and chi^2_min ~ 16 (~4 sigma). DESI prefers wa < 0, but conserved-matter RVM with
 //      nu>0 (quintessence, w0>-1) gives wa > 0. Reaching DESI's wa<0 needs the
 //      off-line H^4 / CVC-2.0 extension. The earlier "fits within 2 sigma (nu~0.5,
 //      chi^2~3.4)" result was an artifact of the wa sign error.
@@ -36,13 +36,13 @@ const ALPHA = PLANCK.omega_m / PLANCK.omega_lambda; // ~= 0.4599
 
 // ---- RVM relations (re-derived inline) --------------------------------------
 
-// CPL mapping (Type-G CVC-1.0): w0 = -1 + nu*alpha, wa = +3*nu*alpha.
+// CPL mapping (conserved-matter CVC-1.0): w0 = -1 + nu*alpha, wa = +3*nu*alpha.
 // wa is POSITIVE for nu>0 (quintessence-like: w rises toward the past).
 function cplFromNu(nu, alpha = ALPHA) {
   return { w0: -1 + nu * alpha, wa: 3 * nu * alpha };
 }
 
-// Analytic closed-form modified Friedmann (Type-G H^2 RVM, matter ~(1+z)^3):
+// Analytic closed-form modified Friedmann (conserved-matter H^2 RVM, matter ~(1+z)^3):
 //   E^2(z) = [Om*(1+z)^3 + OL - nu] / (1 - nu)
 function E2Analytic(z, nu, Om = PLANCK.omega_m, OL = PLANCK.omega_lambda) {
   return (Om * Math.pow(1 + z, 3) + OL - nu) / (1 - nu);
@@ -100,7 +100,7 @@ console.log("Imagined Cosmos — reproduction eval harness\n");
     if (Math.abs(residual) > maxAbs) { maxAbs = Math.abs(residual); worstZ = z; }
   }
   check(
-    "closed-form E^2(z) solves E^2 = Om(1+z)^3 + OL + nu(E^2-1) (Type-G Friedmann)",
+    "closed-form E^2(z) solves E^2 = Om(1+z)^3 + OL + nu(E^2-1) (conserved-matter Friedmann)",
     maxAbs < 1e-12,
     `max |residual| = ${maxAbs.toExponential(2)} at z=${worstZ.toFixed(2)}`
   );
