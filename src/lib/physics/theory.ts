@@ -49,10 +49,12 @@ export function computePredictions(params: TheoryParams): TheoryPredictions {
   // +ν·Ω_m(1+z)³ term, so w_eff rises with z (quintessence-like). Verified by
   // differentiating w_eff(z) numerically from Ez (eval/eval.mjs). [Was −3να — a sign
   // error that spuriously placed the model in DESI's preferred wₐ<0 quadrant.]
-  // CVC-2.0 H⁴ correction: ρ_Λ += ν₂·M_P²·(H⁴-H₀⁴)/H₀²; leading CPL shift Δw₀ = +2ν₂α,
-  // Δwₐ = +8ν₂α (leading order; the H⁴ mapping deserves a fuller derivation — see #25).
+  // CVC-2.0 H⁴ correction: ρ_Λ += ν₂·M_P²·(H⁴-H₀⁴)/H₀²; leading CPL shift Δw₀ = +2ν₂α (exact
+  // under flatness), Δwₐ = +6(1+Ω_m0)ν₂α — the exact 6·Ω_m0·(Ω_Λ0+2Ω_m0)/Ω_Λ0 = 7.89α at
+  // Ω_m0=0.315, NOT 8α (8α is only the Ω_m0→1/3 limit). Derived analytically + numerically
+  // against the exact H⁴ Friedmann fixed-point; locked in eval/eval.mjs (Test 5).
   const w0 = -1 + (nu + 2 * nu2) * alpha;
-  const wa = (3 * nu + 8 * nu2) * alpha;
+  const wa = (3 * nu + 6 * (1 + omega_m0) * nu2) * alpha;
 
   // Modified Friedmann for CVC-1.0: E²(z) = [Ω_m0(1+z)³ + Ω_Λ0 - ν] / (1-ν)
   // CVC-2.0 adds H⁴ term — E² solved iteratively at each z
@@ -144,7 +146,7 @@ export function analyticBestNu(
 
 // CVC-2.0: Analytic best-fit ν₂ given fixed ν₁
 // Minimises χ²(ν₁, ν₂) with ν₁ fixed at CVC-1.0 optimum
-// w₀(ν₁,ν₂) = -1 + (ν₁+2ν₂)α,  wₐ(ν₁,ν₂) = +(3ν₁+8ν₂)α
+// w₀(ν₁,ν₂) = -1 + (ν₁+2ν₂)α,  wₐ(ν₁,ν₂) = +(3ν₁ + 6(1+Ω_m0)ν₂)α
 export function analyticBestNu2(
   nu1: number,
   w0_obs: number,
@@ -158,9 +160,9 @@ export function analyticBestNu2(
   // Residuals at ν₂=0 (CVC-1.0 best)
   const dw0_0 = pred1.w0 - w0_obs;
   const dwa_0 = pred1.wa - wa_obs;
-  // Derivatives of (w₀, wₐ) w.r.t. ν₂: dw₀/dν₂ = 2α, dwₐ/dν₂ = +8α (leading order)
+  // Derivatives of (w₀, wₐ) w.r.t. ν₂ (leading order): dw₀/dν₂ = 2α, dwₐ/dν₂ = 6(1+Ω_m0)α
   const dw0_dnu2 = 2 * alpha;
-  const dwa_dnu2 = 8 * alpha;
+  const dwa_dnu2 = 6 * (1 + FIDUCIAL.omega_m0) * alpha;
   // Analytic minimization of 2D correlated χ²
   const s00 = w0_err * w0_err;
   const saa = wa_err * wa_err;
