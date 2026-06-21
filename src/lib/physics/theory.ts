@@ -44,12 +44,15 @@ export function computePredictions(params: TheoryParams): TheoryPredictions {
 
   const alpha = omega_m0 / omega_lambda0; // ≈ 0.4599
 
-  // CVC-1.0 CPL parameters: w₀ = -1 + να, wₐ = -3να
-  // CVC-2.0 H⁴ correction: ρ_Λ += ν₂·M_P²·(H⁴-H₀⁴)/H₀²
-  // Near z=0, H⁴ term contributes at rate 2× the H² term to w₀, ~8/3× to wₐ
-  // Compact CPL shift: Δw₀ = 2ν₂α, Δwₐ = -(8ν₂ - 6ν₂)α = -2ν₂α additional slope
+  // CVC-1.0 CPL parameters (conserved-matter H²-RVM background): w₀ = -1 + να, wₐ = +3να.
+  // wₐ is POSITIVE for ν>0: the effective DE density ρ_DE = E² − Ω_m(1+z)³ carries a
+  // +ν·Ω_m(1+z)³ term, so w_eff rises with z (quintessence-like). Verified by
+  // differentiating w_eff(z) numerically from Ez (eval/eval.mjs). [Was −3να — a sign
+  // error that spuriously placed the model in DESI's preferred wₐ<0 quadrant.]
+  // CVC-2.0 H⁴ correction: ρ_Λ += ν₂·M_P²·(H⁴-H₀⁴)/H₀²; leading CPL shift Δw₀ = +2ν₂α,
+  // Δwₐ = +8ν₂α (leading order; the H⁴ mapping deserves a fuller derivation — see #25).
   const w0 = -1 + (nu + 2 * nu2) * alpha;
-  const wa = -(3 * nu + 8 * nu2) * alpha;
+  const wa = (3 * nu + 8 * nu2) * alpha;
 
   // Modified Friedmann for CVC-1.0: E²(z) = [Ω_m0(1+z)³ + Ω_Λ0 - ν] / (1-ν)
   // CVC-2.0 adds H⁴ term — E² solved iteratively at each z
@@ -60,12 +63,13 @@ export function computePredictions(params: TheoryParams): TheoryPredictions {
       const denominator = 1 - nu;
       return Math.sqrt(Math.max(numerator / denominator, 0));
     }
-    // CVC-2.0: E² = [Ω_m(1+z)³ + Ω_Λ₀ - ν(E²-1) - ν₂(E⁴-1)]
-    // Fixed-point iteration: E²_new = Ω_m(1+z)³ + Ω_Λ₀ - ν(E²_old-1) - ν₂(E⁴_old-1)
+    // CVC-2.0: E² = Ω_m(1+z)³ + Ω_Λ₀ + ν(E²-1) + ν₂(E⁴-1)
+    // (consistent with ρ_Λ/ρ_c = Ω_Λ0 + ν(E²-1) + ν₂(E⁴-1); reduces to the CVC-1.0
+    //  analytic form above when ν₂=0. [Was −ν(E²-1)−ν₂(E⁴-1): wrong sign.])
     let E2 = omega_m0 * Math.pow(1 + z, 3) + omega_lambda0; // initial guess
     for (let iter = 0; iter < 20; iter++) {
       const next = omega_m0 * Math.pow(1 + z, 3) + omega_lambda0
-        - nu * (E2 - 1) - nu2 * (E2 * E2 - 1);
+        + nu * (E2 - 1) + nu2 * (E2 * E2 - 1);
       if (Math.abs(next - E2) < 1e-10) { E2 = next; break; }
       E2 = next;
     }
@@ -96,8 +100,9 @@ export function computePredictions(params: TheoryParams): TheoryPredictions {
   // CVC-2.0: H⁴ term is negligible at early times (H²>>H₀² dominates), same shift
   const deltaH0 = (params.H0 ?? FIDUCIAL.H0) * nu * 0.03;
 
-  // CVC residual: 0 for CVC-1.0, non-zero offset for CVC-2.0 (H⁴ moves off the line)
-  const cvcResidual = wa + 3 * (1 + w0);
+  // CVC residual: 0 for CVC-1.0 (which lives on the line wₐ = +3(1+w₀)),
+  // non-zero offset for CVC-2.0 (H⁴ moves off the line)
+  const cvcResidual = wa - 3 * (1 + w0);
 
   return {
     nu,
@@ -123,11 +128,11 @@ export function analyticBestNu(
   rho: number,
   alpha: number = FIDUCIAL.alpha
 ): number {
-  // Theory: w0 = -1 + ν α,  wa = -3ν α
-  // Define: a = α/σ_w0,  b = -3α/σ_wa  (∂w0/∂ν / σ and ∂wa/∂ν / σ)
+  // Theory (conserved-matter CVC-1.0): w0 = -1 + ν α,  wa = +3ν α
+  // Define: a = α/σ_w0,  b = +3α/σ_wa  (∂w0/∂ν / σ and ∂wa/∂ν / σ)
   // c0 = (-1 - w0_obs)/σ_w0,  ca = (-wa_obs)/σ_wa  (residuals at ν=0)
   const a = alpha / w0_err;
-  const b = -3 * alpha / wa_err;
+  const b = 3 * alpha / wa_err;
   const c0 = (-1 - w0_obs) / w0_err;
   const ca = -wa_obs / wa_err;
 
@@ -139,7 +144,7 @@ export function analyticBestNu(
 
 // CVC-2.0: Analytic best-fit ν₂ given fixed ν₁
 // Minimises χ²(ν₁, ν₂) with ν₁ fixed at CVC-1.0 optimum
-// w₀(ν₁,ν₂) = -1 + (ν₁+2ν₂)α,  wₐ(ν₁,ν₂) = -(3ν₁+8ν₂)α
+// w₀(ν₁,ν₂) = -1 + (ν₁+2ν₂)α,  wₐ(ν₁,ν₂) = +(3ν₁+8ν₂)α
 export function analyticBestNu2(
   nu1: number,
   w0_obs: number,
@@ -153,9 +158,9 @@ export function analyticBestNu2(
   // Residuals at ν₂=0 (CVC-1.0 best)
   const dw0_0 = pred1.w0 - w0_obs;
   const dwa_0 = pred1.wa - wa_obs;
-  // Derivatives of (w₀, wₐ) w.r.t. ν₂: dw₀/dν₂ = 2α, dwₐ/dν₂ = -8α
+  // Derivatives of (w₀, wₐ) w.r.t. ν₂: dw₀/dν₂ = 2α, dwₐ/dν₂ = +8α (leading order)
   const dw0_dnu2 = 2 * alpha;
-  const dwa_dnu2 = -8 * alpha;
+  const dwa_dnu2 = 8 * alpha;
   // Analytic minimization of 2D correlated χ²
   const s00 = w0_err * w0_err;
   const saa = wa_err * wa_err;
@@ -182,7 +187,7 @@ export function chi2Gradient(
 ): number {
   const predictions = computePredictions({ nu });
   const dw0_dnu = alpha;
-  const dwa_dnu = -3 * alpha;
+  const dwa_dnu = 3 * alpha;
   const delta_w0 = (predictions.w0 - w0_obs) / (w0_err * w0_err);
   const delta_wa = (predictions.wa - wa_obs) / (wa_err * wa_err);
   const cross = rho / (w0_err * wa_err);

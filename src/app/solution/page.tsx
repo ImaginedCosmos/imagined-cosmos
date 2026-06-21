@@ -377,7 +377,7 @@ export default function SolutionPage() {
             <p className="text-xs font-mono text-accent uppercase tracking-wider mb-3">
               CVC CPL parameters
             </p>
-            <BlockMath math="w_0 = -1 + \nu\,\frac{\Omega_{m0}}{\Omega_{\Lambda 0}}, \qquad w_a = -3\nu\,\frac{\Omega_{m0}}{\Omega_{\Lambda 0}}" />
+            <BlockMath math="w_0 = -1 + \nu\,\frac{\Omega_{m0}}{\Omega_{\Lambda 0}}, \qquad w_a = +3\nu\,\frac{\Omega_{m0}}{\Omega_{\Lambda 0}}" />
             <p className="text-sm text-muted mt-4 leading-relaxed">
               Using Planck values <InlineMath math="\Omega_{m0} = 0.315" />,{" "}
               <InlineMath math="\Omega_{\Lambda 0} = 0.685" />.
@@ -388,11 +388,11 @@ export default function SolutionPage() {
             <p className="text-xs font-mono text-emerald-400 uppercase tracking-wider mb-3">
               The CVC Falsification Line
             </p>
-            <BlockMath math="w_a = -3\left(1 + w_0\right)" />
+            <BlockMath math="w_a = +3\left(1 + w_0\right)" />
             <p className="text-sm text-muted mt-4 leading-relaxed">
               This constraint — that <InlineMath math="w_0" /> and{" "}
               <InlineMath math="w_a" /> lie on a specific ray through{" "}
-              <InlineMath math="(-1,\,0)" /> with slope <InlineMath math="-3" /> — is
+              <InlineMath math="(-1,\,0)" /> with slope <InlineMath math="+3" /> — is
               the sharpest prediction of the CVC framework. It is not a two-parameter
               family. It is a one-parameter family, with <InlineMath math="\nu" /> as
               the single free parameter. If DESI DR2 finds the best-fit{" "}
@@ -403,12 +403,18 @@ export default function SolutionPage() {
 
           <div className="space-y-4 text-muted leading-relaxed mb-8">
             <p>
-              For the DESI DR1 central value <InlineMath math="w_0 \approx -0.727" />,
-              the implied <InlineMath math="\nu \approx 0.59" /> — far above the naive
-              Standard Model prediction (<InlineMath math="|\nu_{\rm SM}| \sim 10^{-3}" />).
-              This tension is real and requires either beyond-Standard-Model contributions
-              to the vacuum running, or the DESI signal migrating toward the CVC line
-              in DR2. The CVC prediction for DR2 is:
+              Matching DESI DR1&apos;s central <InlineMath math="w_0 \approx -0.727" /> alone
+              implies <InlineMath math="\nu \approx 0.59" /> — far above the naive Standard
+              Model prediction (<InlineMath math="|\nu_{\rm SM}| \sim 10^{-3}" />). But that{" "}
+              <InlineMath math="\nu" /> sits on the CVC ray, which sends{" "}
+              <InlineMath math="w_a \approx +0.82" /> — the opposite sign to DESI&apos;s{" "}
+              <InlineMath math="w_a \approx -1.05" />. So <InlineMath math="\nu \approx 0.59" />{" "}
+              is <em>not</em> the joint best fit and does not reproduce DESI&apos;s{" "}
+              <InlineMath math="w_a" />. The joint <InlineMath math="(w_0, w_a)" /> fit instead
+              collapses to <InlineMath math="\nu \approx 0.02" /> (essentially ΛCDM). Even the
+              single-parameter <InlineMath math="\nu \approx 0.59" /> would lie far above{" "}
+              <InlineMath math="|\nu_{\rm SM}| \sim 10^{-3}" />, but the H²-line model does not
+              fit DESI in either case. The CVC prediction for DR2 is:
             </p>
           </div>
 
@@ -419,7 +425,7 @@ export default function SolutionPage() {
             <div className="grid grid-cols-2 gap-6">
               {[
                 { label: "w₀", value: "−0.73 to −0.97", note: "depending on ν" },
-                { label: "wₐ", value: "−0.82 to −0.09", note: "on the CVC ray" },
+                { label: "wₐ", value: "+0.09 to +0.81", note: "on the CVC ray" },
               ].map((p) => (
                 <div key={p.label} className="text-center">
                   <p className="text-xs font-mono text-muted/60 mb-1">{p.label}</p>
@@ -429,19 +435,23 @@ export default function SolutionPage() {
               ))}
             </div>
             <p className="text-sm text-muted mt-6 leading-relaxed border-t border-surface-light pt-5">
-              The critical test: if DR2 finds{" "}
-              <InlineMath math="w_a / (1 + w_0) \approx -3" /> to within 1σ,
-              the CVC framework is strongly supported. If the ratio deviates
-              significantly — toward quintessence (<InlineMath math="w_a > -3(1+w_0)" />)
-              or beyond — it is ruled out.
+              The critical test: the CVC ray predicts{" "}
+              <InlineMath math="w_a / (1 + w_0) = +3" />. DESI DR1 already finds{" "}
+              <InlineMath math="w_a < 0" /> (a negative ratio), ~4σ from this ray,
+              so the H²-line is already disfavoured. DR2 will sharpen whether the
+              data drifts toward the ray or further onto the{" "}
+              <InlineMath math="w_a > +3(1+w_0)" /> side.
             </p>
           </div>
 
           <h3 className="text-lg font-semibold mb-4">The w₀–wₐ Parameter Space</h3>
           <p className="text-sm text-muted leading-relaxed mb-5">
-            The CVC constraint ray passes through the DESI 2σ ellipse. The green
-            dashed line is the CVC prediction <InlineMath math="w_a = -3(1+w_0)" />.
-            Any measurement inconsistent with this ray falsifies the theory.
+            The CVC constraint ray (positive slope) passes far from the DESI 2σ
+            ellipse — DESI prefers <InlineMath math="w_a \approx -1.05 < 0" />,
+            while the ray gives <InlineMath math="w_a > 0" /> for{" "}
+            <InlineMath math="w_0 > -1" />. The green dashed line is the CVC
+            prediction <InlineMath math="w_a = +3(1+w_0)" />; the DESI point lies
+            off it, disfavouring the H²-line.
           </p>
           <WoWaPlane />
         </section>
@@ -511,11 +521,11 @@ export default function SolutionPage() {
 
         {/* Current Result */}
         <section className="mb-16">
-          <div className="rounded-2xl border border-emerald-700/40 bg-emerald-950/10 p-8">
-            <p className="text-xs font-mono tracking-widest uppercase text-emerald-400 mb-2">
+          <div className="rounded-2xl border border-amber-700/40 bg-amber-950/10 p-8">
+            <p className="text-xs font-mono tracking-widest uppercase text-amber-400 mb-2">
               Result — DESI DR1 (2024)
             </p>
-            <h2 className="text-2xl font-bold mb-6">CVC-1.0 Converges</h2>
+            <h2 className="text-2xl font-bold mb-6">CVC-1.0 vs DESI DR1 — Disfavoured</h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
               <div className="rounded-xl border border-red-700/30 bg-red-950/10 p-5 text-center">
@@ -523,29 +533,30 @@ export default function SolutionPage() {
                 <p className="text-3xl font-bold font-mono text-foreground">{lcdmChi2.toFixed(1)}</p>
                 <p className="text-xs text-muted mt-1">χ²  —  {Math.sqrt(lcdmChi2).toFixed(1)}σ from DESI</p>
               </div>
-              <div className="rounded-xl border border-emerald-700/40 bg-emerald-950/20 p-5 text-center">
-                <p className="text-xs font-mono text-emerald-400/70 uppercase tracking-wider mb-2">
+              <div className="rounded-xl border border-amber-700/40 bg-amber-950/20 p-5 text-center">
+                <p className="text-xs font-mono text-amber-400/70 uppercase tracking-wider mb-2">
                   CVC-1.0  (ν = {best.nu.toFixed(3)})
                 </p>
-                <p className="text-3xl font-bold font-mono text-emerald-300">{best.chi2_desi.toFixed(2)}</p>
+                <p className="text-3xl font-bold font-mono text-amber-300">{best.chi2_desi.toFixed(2)}</p>
                 <p className="text-xs text-muted mt-1">χ²  —  {best.sigma_desi.toFixed(2)}σ from DESI</p>
               </div>
               <div className="rounded-xl border border-surface-light bg-surface p-5 text-center">
-                <p className="text-xs font-mono text-accent/70 uppercase tracking-wider mb-2">Improvement</p>
+                <p className="text-xs font-mono text-accent/70 uppercase tracking-wider mb-2">vs ΛCDM</p>
                 <p className="text-3xl font-bold font-mono text-violet-300">
                   Δχ² = {(lcdmChi2 - best.chi2_desi).toFixed(1)}
                 </p>
-                <p className="text-xs text-muted mt-1">ΔAIC = {(lcdmChi2 - best.chi2_desi - 2).toFixed(1)} favours CVC</p>
+                <p className="text-xs text-muted mt-1">ΔAIC = {(lcdmChi2 - best.chi2_desi - 2).toFixed(1)} (negative ⇒ ΛCDM preferred)</p>
               </div>
             </div>
 
             <p className="text-sm text-muted leading-relaxed">
               At best-fit ν* = {best.nu.toFixed(3)} ± {best.nu_err.toFixed(3)} (1σ), CVC-1.0&apos;s
-              predicted (w₀, wₐ) = ({best.w0.toFixed(3)}, {best.wa.toFixed(3)}) lies within the
-              DESI DR1 2σ confidence ellipse. ΛCDM (w₀=−1, wₐ=0) is ruled out at{" "}
-              {Math.sqrt(lcdmChi2).toFixed(1)}σ by the same dataset. The CVC constraint
-              line wₐ = −3(1+w₀) passes through the observational ellipse.
-              This is not a proof — DESI DR2 will sharpen or overturn it.
+              predicted (w₀, wₐ) = ({best.w0.toFixed(3)}, {best.wa.toFixed(3)}) lies roughly 4σ
+              from the DESI DR1 central point (χ² ≈ {best.chi2_desi.toFixed(1)}): the H²-line
+              model is disfavoured by DESI, not a fit. The CVC ray wₐ = +3(1+w₀) has positive
+              slope and passes far from DESI&apos;s ellipse — DESI prefers wₐ ≈ −1.05 &lt; 0,
+              whereas at w₀ = −0.727 the ray sits at wₐ ≈ +0.82. DESI DR2 will sharpen this
+              verdict.
             </p>
           </div>
         </section>
@@ -565,7 +576,7 @@ export default function SolutionPage() {
               },
               {
                 n: "3",
-                text: "The CPL equation of state satisfies w_a = −3(1 + w₀) — a one-parameter ray through ΛCDM, falsifiable by DESI DR2.",
+                text: "The CPL equation of state satisfies w_a = +3(1 + w₀) — a one-parameter ray through ΛCDM with positive slope, already disfavoured by DESI DR1 (which prefers w_a < 0) and further testable by DESI DR2.",
               },
               {
                 n: "4",

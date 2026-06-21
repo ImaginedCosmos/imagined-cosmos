@@ -182,15 +182,18 @@ export default function SolverLoop() {
                 Best-fit ν = {best.nu.toFixed(4)}
               </p>
               <p className="text-sm text-muted leading-relaxed mb-4">
-                The CVC theory converges with χ² = {best.chi2_desi.toFixed(2)} at
-                ({best.w0.toFixed(3)}, {best.wa.toFixed(3)}) — within {best.sigma_desi.toFixed(1)}σ
-                of DESI. The constraint line wₐ = −3(1 + w₀) is satisfied.
+                The H²-line model is disfavoured: its best fit reaches only χ² ={" "}
+                {best.chi2_desi.toFixed(2)} at ({best.w0.toFixed(3)}, {best.wa.toFixed(3)}) —{" "}
+                {best.sigma_desi.toFixed(1)}σ from DESI. The fit collapses toward ΛCDM
+                (ν → {best.nu.toFixed(2)}), and on the CVC ray wₐ = +3(1 + w₀) the model
+                gives wₐ &gt; 0, whereas DESI prefers wₐ &lt; 0. Reaching the DESI best-fit
+                requires the off-line CVC-2.0 / H⁴ extension.
               </p>
               <div className="text-xs font-mono text-emerald-400/70 space-y-1">
                 <p>ν_best = {best.nu.toFixed(4)}</p>
                 <p>w₀ = {best.w0.toFixed(4)}  (DESI: {CONSTRAINTS.w0})</p>
                 <p>wₐ = {best.wa.toFixed(4)}  (DESI: {CONSTRAINTS.wa})</p>
-                <p>wₐ + 3(1+w₀) = {(best.wa + 3 * (1 + best.w0)).toFixed(6)}  [CVC residual]</p>
+                <p>wₐ − 3(1+w₀) = {(best.wa - 3 * (1 + best.w0)).toFixed(6)}  [CVC residual]</p>
               </div>
             </>
           )}
@@ -201,9 +204,10 @@ export default function SolverLoop() {
                 Best-fit ν₁ = {best.nu.toFixed(4)}, χ² = {best.chi2_desi.toFixed(2)} — revision triggered
               </p>
               <p className="text-sm text-muted leading-relaxed mb-4">
-                CVC-1.0 finds its minimum inside the DESI ellipse for w₀ but not the
-                full (w₀, wₐ) combination. The loop advances to CVC-2.0: an H⁴ correction
-                term ν₂ is added, breaking the wₐ = −3(1+w₀) constraint line and giving
+                The CVC-1.0 minimum lands {best.sigma_desi.toFixed(1)}σ from DESI — off the
+                data in w₀ and in the full (w₀, wₐ) combination, since its positive-slope
+                ray gives wₐ &gt; 0 while DESI prefers wₐ &lt; 0. The loop advances to CVC-2.0: an H⁴ correction
+                term ν₂ is added, breaking the wₐ = +3(1+w₀) constraint line and giving
                 the theory an extra degree of freedom to approach the DESI best-fit.
               </p>
             </>
@@ -279,7 +283,7 @@ export default function SolverLoop() {
                       { label: "ν₁ (fixed)", value: step2.nu1.toFixed(4), sub: "CVC-1.0 best" },
                       { label: "ν₂ (H⁴)", value: step2.nu2.toFixed(4), sub: "correction term" },
                       { label: "χ² (DESI)", value: step2.chi2_desi.toFixed(3), sub: `${step2.sigma_desi.toFixed(2)}σ from DESI` },
-                      { label: "wₐ−CVC line", value: step2.wa !== undefined ? (step2.wa + 3 * (1 + step2.w0)).toFixed(4) : "—", sub: "off-line offset" },
+                      { label: "wₐ−CVC line", value: step2.wa !== undefined ? (step2.wa - 3 * (1 + step2.w0)).toFixed(4) : "—", sub: "off-line offset" },
                     ].map((s) => (
                       <div key={s.label} className="rounded-xl border border-surface-light bg-surface px-4 py-3">
                         <p className="text-xs font-mono text-muted/60 uppercase tracking-wider mb-1">{s.label}</p>

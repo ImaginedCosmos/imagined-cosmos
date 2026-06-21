@@ -193,7 +193,7 @@ export default function WoWaPlane() {
     ctx.textAlign = "center";
     ctx.fillText("2.5–3.9σ", mx + 20, my - 6);
 
-    // CVC constraint ray: w_a = -3(1 + w0), passes through ΛCDM (-1, 0)
+    // CVC constraint ray: w_a = +3(1 + w0), passes through ΛCDM (-1, 0)
     // Clip to plot bounds
     ctx.save();
     ctx.beginPath();
@@ -205,8 +205,8 @@ export default function WoWaPlane() {
     ctx.beginPath();
     // draw from w0=-1.55 to w0=-0.25
     const rayW0Start = -1.55, rayW0End = -0.25;
-    ctx.moveTo(toX(rayW0Start), toY(-3 * (1 + rayW0Start)));
-    ctx.lineTo(toX(rayW0End), toY(-3 * (1 + rayW0End)));
+    ctx.moveTo(toX(rayW0Start), toY(3 * (1 + rayW0Start)));
+    ctx.lineTo(toX(rayW0End), toY(3 * (1 + rayW0End)));
     ctx.stroke();
     ctx.setLineDash([]);
     ctx.restore();
@@ -215,10 +215,10 @@ export default function WoWaPlane() {
     ctx.fillStyle = "rgba(52,211,153,0.55)";
     ctx.font = "9px monospace";
     ctx.textAlign = "left";
-    ctx.fillText("wₐ = −3(1+w₀)  [CVC]", toX(-1.45), toY(-3*(1+-1.45)) - 6);
+    ctx.fillText("wₐ = +3(1+w₀)  [CVC]", toX(-1.45), toY(3*(1+-1.45)) - 6);
 
-    // CVC prediction point: ν ≈ 0.59 → w₀ = -0.727, w_a = -3(0.273) = -0.819
-    const CVC_W0 = -0.727, CVC_WA = -3 * (1 + -0.727); // ≈ -0.819
+    // CVC prediction point: ν ≈ 0.02 (≈ΛCDM best fit); the CVC ray at w₀=-0.727 sits at w_a = +3(0.273) = +0.819, far from DESI's wa=-1.05
+    const CVC_W0 = -0.727, CVC_WA = 3 * (1 + -0.727); // ≈ +0.819
     const sx = toX(CVC_W0), sy = toY(CVC_WA);
     ctx.beginPath();
     ctx.arc(sx, sy, 5, 0, Math.PI * 2);
@@ -230,7 +230,7 @@ export default function WoWaPlane() {
     ctx.fillStyle = "rgba(52,211,153,0.8)";
     ctx.font = "10px monospace";
     ctx.textAlign = "left";
-    ctx.fillText("CVC  (−0.73, −0.82)", sx + 8, sy + 4);
+    ctx.fillText("CVC  (−0.73, +0.82)", sx + 8, sy + 4);
 
     // Tick labels
     ctx.fillStyle = "rgba(148,163,184,0.55)";
@@ -296,8 +296,9 @@ export default function WoWaPlane() {
       <div className="px-5 py-3 border-t border-surface-light bg-surface/40">
         <p className="text-xs font-mono text-muted/55 leading-relaxed">
           w₀–wₐ parameter space. DESI DR1 +CMB+DES-SN5YR confidence ellipses (arXiv:2404.03002, ρ ≈ −0.90).
-          The CVC ray wₐ = −3(1+w₀) is the Causal Vacuum Correspondence prediction — a one-parameter family
-          through ΛCDM. The CVC point at (−0.73, −0.82) falls within the DESI 2σ ellipse.
+          The CVC ray wₐ = +3(1+w₀) is the Causal Vacuum Correspondence prediction — a one-parameter family
+          through ΛCDM. The CVC point at (−0.73, +0.82) falls far from the DESI ellipse (DESI prefers wₐ ≈ −1.05),
+          so the H²-line model is disfavoured by DESI.
         </p>
       </div>
     </div>
