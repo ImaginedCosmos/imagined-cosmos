@@ -204,8 +204,9 @@ export default function SolverLoop() {
                 Best-fit ν₁ = {best.nu.toFixed(4)}, χ² = {best.chi2_desi.toFixed(2)} — revision triggered
               </p>
               <p className="text-sm text-muted leading-relaxed mb-4">
-                CVC-1.0 finds its minimum inside the DESI ellipse for w₀ but not the
-                full (w₀, wₐ) combination. The loop advances to CVC-2.0: an H⁴ correction
+                The CVC-1.0 minimum lands {best.sigma_desi.toFixed(1)}σ from DESI — off the
+                data in w₀ and in the full (w₀, wₐ) combination, since its positive-slope
+                ray gives wₐ &gt; 0 while DESI prefers wₐ &lt; 0. The loop advances to CVC-2.0: an H⁴ correction
                 term ν₂ is added, breaking the wₐ = +3(1+w₀) constraint line and giving
                 the theory an extra degree of freedom to approach the DESI best-fit.
               </p>

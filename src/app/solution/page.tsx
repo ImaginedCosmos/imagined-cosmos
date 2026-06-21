@@ -425,7 +425,7 @@ export default function SolutionPage() {
             <div className="grid grid-cols-2 gap-6">
               {[
                 { label: "w₀", value: "−0.73 to −0.97", note: "depending on ν" },
-                { label: "wₐ", value: "−0.82 to −0.09", note: "on the CVC ray" },
+                { label: "wₐ", value: "+0.09 to +0.81", note: "on the CVC ray" },
               ].map((p) => (
                 <div key={p.label} className="text-center">
                   <p className="text-xs font-mono text-muted/60 mb-1">{p.label}</p>
